@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | First National</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body { background-color: var(--bg-color); display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .login-card { width: 100%; max-width: 400px; padding: 3rem; text-align: center; }
+        .login-logo { font-family: var(--font-body); color: var(--brand-primary); font-size: 2rem; margin-bottom: 2rem; }
+
+/* Toast Container */
+#django-toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+/* Base Toast Style */
+.django-toast {
+    pointer-events: auto;
+    min-width: 300px;
+    max-width: 450px;
+    background: var(--surface-color);
+    color: var(--text-primary);
+    padding: 1rem 1.5rem;
+    border-radius: 4px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid var(--brand-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    font-weight: 500;
+    animation: toastSlideIn 0.3s ease-out forwards;
+}
+
+/* Status Colors */
+.django-toast.error { border-left-color: #dc2626; background: #fef2f2; color: #991b1b; }
+.django-toast.warning { border-left-color: #d97706; background: #fffbeb; color: #92400e; }
+.django-toast.success { border-left-color: #059669; background: #ecfdf5; color: #065f46; }
+
+/* Exit Animation Class */
+.django-toast.fade-out {
+    animation: toastFadeOut 0.5s ease-in forwards;
+}
+
+@keyframes toastSlideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes toastFadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+}
+    </style>
+</head>
+<body>
+    <div class="card login-card">
+        <div class="login-logo">First National</div>
+        <h3 class="mb-2">Secure Sign In</h3>
+        {% if messages %}
+        <div id="django-toast-container">
+            {% for message in messages %}
+                <div class="django-toast {{ message.tags }}" role="alert">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        {% if message.tags == 'success' %}
+                            <i class="fa-solid fa-circle-check"></i>
+                        {% elif message.tags == 'warning' %}
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        {% elif message.tags == 'error' %}
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                        {% endif %}
+                        <span>{{ message }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="form-group" style="text-align: left;">
+                <label>User ID</label>
+                <input type="text" name="username" class="form-control" placeholder="Enter your ID">
+            </div>
+            <div class="form-group" style="text-align: left;">
+                <label>Password</label>
+                <input type="password" name="password" class="form-control" placeholder="••••••••">
+            </div>
+            <div style="text-align: right; margin-bottom: 1.5rem;">
+                <a href="#" style="font-size: 0.85rem; color: var(--brand-primary);">Forgot Password?</a>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; display: block; text-align: center;">Access Accounts</button>
+        </form>
+        <p style="margin-top: 2rem; font-size: 0.8rem; color: var(--text-secondary);">
+        <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
+            <p style="color: var(--text-secondary);">Not enrolled? <a href="{% url 'accounts:signUp' %}">Sign up now.</a></p>
+        </div>
+        </p>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const toasts = document.querySelectorAll('.django-toast');
+
+    toasts.forEach(toast => {
+        // Start the removal process after 5 seconds
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+
+            // Wait for the animation to finish before removing from DOM
+            toast.addEventListener('animationend', (e) => {
+                if (e.animationName === 'toastFadeOut') {
+                    toast.remove();
+                }
+            });
+        }, 5000);
+    });
+});
+</script>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

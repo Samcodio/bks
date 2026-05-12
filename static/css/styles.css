@@ -1,0 +1,272 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap');
+
+:root {
+    /* Light Mode Palette */
+    --bg-color: #f4f6f9;
+    --surface-color: #ffffff;
+    --text-primary: #1a1f36;
+    --text-secondary: #697386;
+    --brand-primary: #0f2042; /* Deep Navy */
+    --brand-accent: #cba052; /* Bronze/Gold */
+    --border-color: #e5e7eb;
+    --success: #059669;
+    --danger: #dc2626;
+    
+    /* Typography */
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+    
+    /* Layout */
+    --sidebar-width: 260px;
+    --transition: all 0.3s ease;
+}
+
+[data-theme="dark"] {
+    /* Navy Midnight Dark Mode */
+    --bg-color: #070e20;
+    --surface-color: #111a33;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --brand-primary: #1e325c;
+    --border-color: #1e293b;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    line-height: 1.6;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+h1, h2, h3, h4, .brand-logo {
+    font-family: var(--font-heading);
+    color: var(--brand-primary);
+}
+
+[data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3, [data-theme="dark"] .brand-logo {
+    color: var(--text-primary);
+}
+
+a {
+    text-decoration: none;
+    color: var(--brand-primary);
+}
+
+ul {
+    list-style: none;
+}
+
+/* UI Components */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    border: none;
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background-color: var(--brand-primary);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: var(--brand-accent);
+}
+
+.btn-outline {
+    border: 1px solid var(--brand-primary);
+    color: var(--brand-primary);
+    background: transparent;
+}
+
+.btn-outline:hover {
+    background-color: var(--brand-primary);
+    color: #fff;
+}
+
+.card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--surface-color);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--brand-accent);
+    box-shadow: 0 0 0 2px rgba(203, 160, 82, 0.2);
+}
+
+/* Layouts */
+.public-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 5%;
+    background-color: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.public-nav-links a {
+    margin-left: 2rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Secure Layout */
+.secure-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--surface-color);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-nav {
+    padding: 1rem 0;
+    flex-grow: 1;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.sidebar-nav a i {
+    width: 24px;
+    margin-right: 10px;
+}
+
+.sidebar-nav a:hover, .sidebar-nav a.active {
+    background-color: rgba(203, 160, 82, 0.1);
+    color: var(--brand-primary);
+    border-right: 3px solid var(--brand-accent);
+}
+
+[data-theme="dark"] .sidebar-nav a:hover, [data-theme="dark"] .sidebar-nav a.active {
+    color: var(--brand-accent);
+}
+
+.main-content {
+    flex: 1;
+    padding: 2rem 5%;
+    overflow-y: auto;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+/* Toggle Switch for Settings */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--brand-primary);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Utilities */
+.text-danger { color: var(--danger); }
+.text-success { color: var(--success); }
+.mt-1 { margin-top: 1rem; }
+.mt-2 { margin-top: 2rem; }
+.mb-1 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 2rem; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .secure-wrapper { flex-direction: column; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); }
+    .sidebar-nav { display: flex; overflow-x: auto; white-space: nowrap; padding: 0; }
+    .sidebar-nav a { padding: 1rem; border-right: none; border-bottom: 3px solid transparent; }
+    .sidebar-nav a.active { border-bottom: 3px solid var(--brand-accent); }
+    .public-nav-links { display: none; } /* Simplified for mobile */
+}
