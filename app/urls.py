@@ -16,5 +16,6 @@ urlpatterns = [
     path('deposit/', deposit, name='deposit'),
     path('success/', success, name='success'),
     path('failed/', failed, name='failed'),
+    path('custom_pin/', addPin, name='addPin'),
 
 ]

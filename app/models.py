@@ -36,6 +36,7 @@ class Account(models.Model):
     is_active      = models.BooleanField(default=True)
     created_at     = models.DateTimeField(auto_now_add=True)
     updated_at     = models.DateTimeField(auto_now=True)
+    pin            = models.CharField(max_length=4, null=True, blank=True)
 
     class Meta:
         db_table = "accounts"
@@ -52,7 +53,7 @@ class Account(models.Model):
         max_attempts = 100
         for _ in range(max_attempts):
             random_digits = f"{random.randint(0, 9999999):07d}"
-            gen_id = f"FN00{random_digits}"
+            gen_id = f"00{random_digits}"
 
             if not Account.objects.filter(account_genID=gen_id).exists():
                 return gen_id

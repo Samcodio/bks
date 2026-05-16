@@ -43,7 +43,11 @@ def setting(request):
 
 @login_required(login_url='accounts:login')
 def makeTransfer(request):
-    return render(request, 'Transact/transfer.html')
+    if 'transact' in request.GET:
+        messages.error(request, 'FAULT_0x78C3: Upstream gateway returned an unexpected response during authorization. Ref: TXN-992-DELTA. Please contact support.')
+        return redirect("app:transfer")
+    context = {}
+    return render(request, 'Transact/transfer.html', context)
 
 
 @login_required(login_url='accounts:login')
@@ -151,7 +155,7 @@ def deposit(request):
     return render(request, 'User/deposit.html', context)
 
 
-@login_required
+@login_required(login_url='accounts:login')
 def success(request):
     amount = request.GET.get("amount")
     tx_ref = request.GET.get("tx_ref")
@@ -162,9 +166,32 @@ def success(request):
     return render(request, 'Transact/success.html', context)
 
 
-@login_required
+@login_required(login_url='accounts:login')
 def failed(request):
     context = {}
     return render(request, 'Transact/failed.html', context)
 
+
+@login_required(login_url='accounts:login')
+def addPin(request):
+    if request.method == 'POST':
+        pin1 = request.POST.get('pin1')
+        pin2 = request.POST.get('pin2')
+        pin3 = request.POST.get('pin3')
+        pin4 = request.POST.get('pin4')
+
+        # combine the 4 digits into one PIN
+        pin = f"{pin1}{pin2}{pin3}{pin4}"
+
+        if len(pin) == 4 and pin.isdigit():
+            user = request.user.account
+            user.pin = pin
+            user.save()
+            messages.success(request, 'PIN set successfully.')
+            return redirect('app:dashboard')
+        else:
+            messages.error(request, 'ERR_0x4F2A: PIN validation failed during secure channel initialization. Trace ID: 8F3K-29XQ. Please contact support.')
+
+    context = {}
+    return render(request, 'User/pin.html', context)
 
