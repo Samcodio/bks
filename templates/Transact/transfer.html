@@ -36,33 +36,44 @@
         .amount-wrapper {
             text-align: center;
             margin: 2.5rem 0;
-            padding: 2rem 0;
+            padding: 2rem 2.5rem;
             background: rgba(15, 32, 66, 0.03);
             border-radius: 8px;
             border: 1px dashed var(--border-color);
         }
+
         .amount-input-container {
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
+            gap: 4px; /* Tight gap between $ and the first number */
+            width: 100%;
         }
+
         .currency-symbol {
             font-size: 2.5rem;
-            color: var(--text-secondary);
+            font-weight: 600;
+            color: var(--text-primary);
             font-family: var(--font-body);
-            margin-right: 5px;
+            line-height: 1;
+            flex-shrink: 0;
         }
+
         .amount-input {
             font-size: 3.5rem;
+            font-weight: 700;
             font-family: var(--font-body);
             color: var(--text-primary);
             background: transparent;
             border: none;
             outline: none;
-            width: 250px;
+
+            /* --- FIXED MECHANICS: Left alignment + dynamic width --- */
             text-align: left;
+            width: 115px; /* Perfect initial width for the "0.00" placeholder */
+            max-width: 100%;
         }
-        .amount-input::placeholder { color: var(--border-color); }
+        .amount-input::placeholder { color: var(--text-secondary); opacity: 0.3; }
 
         /* Removing arrows from number input */
         input[type=number]::-webkit-inner-spin-button,
@@ -72,63 +83,110 @@
         }
         input[type=number] { -moz-appearance: textfield; }
     </style>
-        <main class="main-content">
-            <div class="transfer-container">
-                <div class="top-bar" style="justify-content: center;">
-                    <h3 style="text-align: center;">Move Money</h3>
-                </div>
 
-                <!-- Progress Stepper -->
-                <div class="stepper">
-                    <div class="step active"><i class="fa-solid fa-circle-dot" style="margin-right: 6px;"></i> Details</div>
-                    <div class="step-line"></div>
-                    <div class="step"><i class="fa-regular fa-circle" style="margin-right: 6px;"></i> Review</div>
-                    <div class="step-line"></div>
-                    <div class="step"><i class="fa-regular fa-circle" style="margin-right: 6px;"></i> Complete</div>
-                </div>
-
-                <div class="card" style="padding: 2.5rem;">
-                    <form>
-                        <!-- Big Amount Input -->
-                        <div class="amount-wrapper">
-                            <label style="display: block; color: var(--text-secondary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 0.5rem;">Amount to Send</label>
-                            <div class="amount-input-container">
-                                <span class="currency-symbol">$</span>
-                                <input type="number" class="amount-input" placeholder="0.00" step="0.01">
-                            </div>
-                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">Daily Limit Remaining: $10,000.00</p>
-                        </div>
-
-                        <div class="grid-2">
-                            <div class="form-group">
-                                <label><i class="fa-solid fa-building-columns" style="color: var(--text-secondary); margin-right: 5px;"></i> From Account</label>
-                                <select class="form-control" style="padding: 0.8rem;">
-                                    <option>Savings (...{{request.user.account.account_genID|slice:"-4:" }}) - ${{request.user.account.balance}}</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label><i class="fa-solid fa-user-plus" style="color: var(--text-secondary); margin-right: 5px;"></i> To Account / Recipient</label>
-                                <input type="number" class="form-control" style="padding: 0.8rem;" placeholder="Add a new recipient...">
-                            </div>
-                        </div>
-                            <div class="form-group">
-                                <label><i class="fa-solid fa-building-columns" style="color: var(--text-secondary); margin-right: 5px;"></i> Recipient's Bank</label>
-                                <select class="form-control" style="padding: 0.8rem;">
-                                    <option>Sky PLC</option>
-                                </select>
-                            </div>
-                        <div class="form-group" style="margin-top: 1rem;">
-                            <label>Memo (Optional)</label>
-                            <input type="text" class="form-control" placeholder="e.g. Rent Payment, Dinner..." style="padding: 0.8rem;">
-                        </div>
-
-                        <div style="margin-top: 2.5rem;">
-                            <a href="transfer-review.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; padding: 1rem; font-size: 1.05rem;">Continue to Review</a>
-                        </div>
-                    </form>
-                </div>
+    <main class="main-content">
+        <div class="transfer-container">
+            <div class="top-bar" style="justify-content: center;">
+                <h3 style="text-align: center;">Move Money</h3>
             </div>
-        </main>
 
+            <!-- Progress Stepper -->
+            <div class="stepper">
+                <div class="step active"><i class="fa-solid fa-circle-dot" style="margin-right: 6px;"></i> Details</div>
+                <div class="step-line"></div>
+                <div class="step"><i class="fa-regular fa-circle" style="margin-right: 6px;"></i> Review</div>
+                <div class="step-line"></div>
+                <div class="step"><i class="fa-regular fa-circle" style="margin-right: 6px;"></i> Complete</div>
+            </div>
+
+            <div class="card" style="padding: 2.5rem;">
+                <form>
+                    <!-- Big Amount Input -->
+                    <div class="amount-wrapper">
+                        <label style="display: block; color: var(--text-secondary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 0.5rem;">Amount to Send</label>
+                        <div class="amount-input-container">
+                            <span class="currency-symbol">$</span>
+                            <!-- Added oninput listener to smoothly recalculate input box size -->
+                            <input type="text" class="amount-input" placeholder="0.00" step="0.01" oninput="formatAndResize(this)">
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">Daily Limit Remaining: $10,000.00</p>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-building-columns" style="color: var(--text-secondary); margin-right: 5px;"></i> From Account</label>
+                            <select class="form-control" style="padding: 0.8rem;">
+                                <option>Savings (...{{ request.user.account.account_genID|slice:"-4:" }}) - ${{ request.user.account.balance }}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-user-plus" style="color: var(--text-secondary); margin-right: 5px;"></i> To Account / Recipient</label>
+                            <input type="number" class="form-control" style="padding: 0.8rem;" placeholder="Add a new recipient...">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-building-columns" style="color: var(--text-secondary); margin-right: 5px;"></i> Recipient's Bank</label>
+                        <select class="form-control" style="padding: 0.8rem;">
+                            <option>Sky PLC</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label>Memo (Optional)</label>
+                        <input type="text" class="form-control" placeholder="e.g. Rent Payment, Dinner..." style="padding: 0.8rem;">
+                    </div>
+
+                    <div style="margin-top: 2.5rem;">
+                        <a href="transfer-review.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; padding: 1rem; font-size: 1.05rem;">Continue to Review</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Refined layout logic scripts -->
+<script>
+    function formatAndResize(el) {
+        // 1. Strip out any non-numeric characters except for a single decimal point
+        let cursorPosition = el.selectionStart;
+        let originalLength = el.value.length;
+
+        let value = el.value.replace(/[^0-9.]/g, '');
+
+        // Prevent multiple decimals
+        let parts = value.split('.');
+        if (parts.length > 2) {
+            parts = [parts[0], parts.slice(1).join('')];
+        }
+
+        // 2. Add commas to the integer part
+        if (parts[0]) {
+            parts[0] = RegExp(/^\d+$/).test(parts[0])
+                ? LongLongToIntString(parts[0])
+                : parseFloat(parts[0]).toLocaleString('en-US');
+        }
+
+        // Reconstruct the value string
+        el.value = parts.join('.');
+
+        // 3. Keep the layout dynamic width tight to the dollar sign
+        if (!el.value) {
+            el.style.width = '115px'; // Base placeholder size
+        } else {
+            // Commas add characters, so 26px per character keeps it perfect
+            el.style.width = (el.value.length * 26) + 20 + 'px';
+        }
+
+        // 4. Clean up cursor positioning so it doesn't jump to the end when a comma is injected
+        let newLength = el.value.length;
+        el.setSelectionRange(cursorPosition + (newLength - originalLength), cursorPosition + (newLength - originalLength));
+    }
+
+    // Helper function to handle massive numbers safely without rounding issues
+    function LongLongToIntString(str) {
+        return str.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+</script>
 {% endblock %}

@@ -10,17 +10,23 @@
 
             <div class="card mb-2" style="max-width: 700px;">
                 <h4 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Display Preferences</h4>
+
+                <!-- The parent flex container stays clean -->
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
+
+                    <!-- RIGHT HERE: This div gets the flex: 1 and padding -->
+                    <div style="flex: 1; padding-right: 10px;">
                         <p style="font-weight: 500;">Dark Mode</p>
                         <p style="font-size: 0.9rem; color: var(--text-secondary);">Switch the dashboard to a high-contrast dark navy theme.</p>
                     </div>
+
+                    <!-- The switch is now safe from being squished -->
                     <label class="switch">
                         <input type="checkbox" id="theme-toggle">
                         <span class="slider"></span>
                     </label>
                 </div>
-            </div>
+            </div> <!-- Closed the card wrapper -->
 
             <form action="" method="post" class="card" style="max-width: 700px;">
                 {% csrf_token %}
