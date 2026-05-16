@@ -109,7 +109,7 @@ DATABASES = {
 DATABASES['default']['CONN_MAX_AGE'] = 60
 
 
-# database_url = "postgresql://bks_6dsl_user:vXYcZLhvO9Ueur8U8lpVPiCPPQ1ezJZy@dpg-d83rran7f7vs739fe66g-a.oregon-postgres.render.com/bks_6dsl"
+# database_url = "postgresql://postgres.ilvcbakdvmebygrekgim:UgnCxk4gKiDgGgko@aws-1-us-east-1.pooler.supabase.com:5432/postgres"
 #
 # DATABASES = {
 #     "default": dj_database_url.parse(database_url)

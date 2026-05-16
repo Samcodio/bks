@@ -133,7 +133,9 @@ def create_notification(
 def notificationList(request):
     notifs = Notification.objects.filter(user=request.user)[:20]
     if 'read' in request.GET:
-        notifs.update(is_read=True)
+        for x in notifs:
+            x.is_read = True
+            x.save()
     context = {
         'notifs': notifs
     }

@@ -213,11 +213,18 @@ ul {
 .switch {
     position: relative;
     display: inline-block;
-    width: 50px;
-    height: 24px;
+
+    /* Force exact proportions across all screen types */
+    width: 50px !important;
+    min-width: 50px !important;
+    max-width: 50px !important;
+    height: 24px !important;
+
+    flex-shrink: 0 !important;
+    margin-left: 15px;
 }
 
-.switch input { 
+.switch input {
     opacity: 0;
     width: 0;
     height: 0;
