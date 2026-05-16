@@ -131,11 +131,9 @@ def create_notification(
 
 @login_required(login_url='accounts:login')
 def notificationList(request):
-    notifs = Notification.objects.filter(user=request.user)[:20]
     if 'read' in request.GET:
-        for x in notifs:
-            x.is_read = True
-            x.save()
+        Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)  # 👈 update first, no slice
+    notifs = Notification.objects.filter(user=request.user)[:20]
     context = {
         'notifs': notifs
     }
