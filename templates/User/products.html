@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}
+<title>Offers | First National</title>
+{% endblock %}
+{% block content %}
+        <main class="main-content">
+            <div class="top-bar"><h3>Explore Products</h3></div>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Exclusive financial instruments curated for your portfolio.</p>
+
+            <div class="grid-2">
+<!--                <div class="card" style="border-top: 4px solid var(&#45;&#45;brand-accent);">-->
+<!--                    <h4 class="mb-1">Reserve Credit Card</h4>-->
+<!--                    <p style="font-size: 0.9rem; color: var(&#45;&#45;text-secondary); margin-bottom: 1.5rem; min-height: 40px;">Earn 3x points on travel and dining with premium concierge access.</p>-->
+<!--                    <button class="btn btn-primary" style="width: 100%;">Apply Now</button>-->
+<!--                </div>-->
+                <div class="card" style="border-top: 4px solid var(--brand-primary);">
+                    <h4 class="mb-1">Personal Loans</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem; min-height: 40px;">Flexible financing with fixed rates for your major life events.</p>
+                    <a href="{% url 'app:loans' %}" class="btn btn-outline" style="width: 100%; display: block;">Check Eligibility</a>
+                </div>
+                <form action="" method="get">
+                <div class="card" style="border-top: 4px solid var(--brand-primary);">
+                    <h4 class="mb-1">High-Yield CD</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem; min-height: 40px;">Lock in a 5.25% APY for 12 months with a First National Certificate of Deposit.</p>
+                    <button name="rates" class="btn btn-outline" style="width: 100%;">View Rates</button>
+                </div>
+                </form>
+            </div>
+        </main>
+{% endblock %}

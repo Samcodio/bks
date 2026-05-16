@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+<title>Settings | First National</title>
+{% endblock %}
+{% block content %}
+
+        <main class="main-content">
+            <div class="top-bar"><h3>Settings & Security</h3></div>
+
+            <div class="card mb-2" style="max-width: 700px;">
+                <h4 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Display Preferences</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <p style="font-weight: 500;">Dark Mode</p>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">Switch the dashboard to a high-contrast dark navy theme.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <form action="" method="post" class="card" style="max-width: 700px;">
+                {% csrf_token %}
+                <h4 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Security</h4>
+                <div class="form-group">
+                    <label>Update Password</label>
+                    {{form.new_password1}}
+                    {{form.new_password2}}
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1.2rem; font-size: 1rem; letter-spacing: 1px;">
+                    Save New Password
+                </button>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
+                    <div>
+                        <p style="font-weight: 500;">Logout</p>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">On all devices</p>
+                    </div>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:logout' %}" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Logout</a>
+                    {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Login</a>
+                    {% endif %}
+                </div>
+            </form>
+        </main>
+
+{% endblock %}

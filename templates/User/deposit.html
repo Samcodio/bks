@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}
+<title>Make Deposit | First National</title>
+{% endblock %}
+{% block content %}
+        <main class="main-content">
+            <div class="top-bar"><h3>Fund Your Account</h3></div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h4>Add Funds via Card</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">Securely fund your account using your debit card.</p>
+
+                    <form id="deposit-form">
+                        <div class="form-group">
+                            <label>Deposit To</label>
+                            <input class="form-control" readonly value='Savings (...{{account.account_genID|slice:"-4:"}})'>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount ($)</label>
+                            <input type="number" class="form-control"
+                               id="deposit-amount"
+                               placeholder="0.00"
+                               min="1">
+                        </div>
+
+<!--                        <div style="background: var(&#45;&#45;bg-color); padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem;">-->
+<!--                            <p style="font-size: 0.85rem; font-weight: 500;">Select Payment Method:</p>-->
+<!--                            <div style="display: flex; gap: 10px; margin-top: 10px;">-->
+<!--                                <label style="flex: 1; padding: 10px; border: 1px solid var(&#45;&#45;border-color); border-radius: 4px; cursor: pointer; text-align: center;">-->
+<!--                                    <input type="radio" name="paymethod" checked style="display: none;">-->
+<!--                                    <i class="fa-regular fa-credit-card"></i> <br> <span style="font-size: 0.75rem;">Card</span>-->
+<!--                                </label>-->
+<!--                                <label style="flex: 1; padding: 10px; border: 1px solid var(&#45;&#45;border-color); border-radius: 4px; cursor: pointer; text-align: center;">-->
+<!--                                    <input type="radio" name="paymethod" style="display: none;">-->
+<!--                                    <i class="fa-solid fa-building-columns"></i> <br> <span style="font-size: 0.75rem;">Transfer</span>-->
+<!--                                </label>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+                     <!-- Response message box (hidden by default) -->
+                        <div id="deposit-msg" style="display:none; padding: 10px; border-radius: 4px; margin-bottom: 1rem;"></div>
+
+
+                        <button type="button" id="pay-btn"  class="btn btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            Secure Payment with flutter<i class="fa-solid fa-lock"></i>
+                        </button>
+                    </form>
+                    <div style="text-align: center; margin-top: 1rem;">
+<!--                        <p style="height: 15px; opacity: 0.6;">With Flutter</p>-->
+                    </div>
+                </div>
+
+                <div class="card" style="background-color: var(--brand-primary); color: white;">
+                    <h4>Recent Deposits</h4>
+                    <div style="margin-top: 1.5rem;">
+                        {% for x in recents %}
+                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <span>{{x.description}}</span>
+                            <span>+ {{x.amount|intcomma}}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </main>
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+<script>
+  const payBtn    = document.getElementById("pay-btn");
+  const amountInput = document.getElementById("deposit-amount");
+  const msgBox    = document.getElementById("deposit-msg");
+
+function showMsg(message, success = true) {
+    // create container if it doesn't exist
+    let container = document.getElementById("django-toast-container");
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "django-toast-container";
+        document.body.appendChild(container);
+    }
+
+    // create toast
+    const toast = document.createElement("div");
+    toast.className = "django-toast error";  // always red as requested
+    toast.setAttribute("role", "alert");
+    toast.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>${message}</span>
+        </div>
+    `;
+
+    container.appendChild(toast);
+
+    // auto remove after 5 seconds (matches your existing script)
+    setTimeout(() => {
+        toast.classList.add("fade-out");
+        toast.addEventListener("animationend", (e) => {
+            if (e.animationName === "toastFadeOut") {
+                toast.remove();
+            }
+        });
+    }, 5000);
+}
+
+  payBtn.addEventListener("click", function () {
+    const amount = parseFloat(amountInput.value);
+
+    if (!amount || amount <= 0) {
+      showMsg("Please enter a valid amount.", false);
+      return;
+    }
+
+    if (amount >= 5000) {
+      showMsg("Verify your account to perform transactions exceeding $5,000.", false);
+      return;
+    }
+
+    FlutterwaveCheckout({
+      public_key:      "{{ flw_public_key }}",   // from Django context
+      tx_ref:          "dep-" + Date.now(),
+      amount:          amount,
+      currency:        "USD",
+      payment_options: "card",
+      redirect_url: "{{ request.scheme }}://{{ request.get_host }}{% url 'payments:deposit_redirect' %}",
+      customer: {
+        email: "{{ request.user.email }}",
+        name:  "{{ request.user.full_name }}",
+      },
+      customizations: {
+        title:       "Account Deposit",
+        description: "Savings (...{{ account.account_genID|slice:'-4:' }})",
+      },
+
+      callback: async function (data) {
+        payBtn.disabled    = true;
+        payBtn.textContent = "Verifying...";
+
+        try {
+          const res = await fetch("{% url 'payments:verify_deposit' %}", {
+            method:  "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken":  "{{ csrf_token }}",
+            },
+            body: JSON.stringify({ transaction_id: data.transaction_id }),
+          });
+
+          const result = await res.json();
+
+          if (result.status === "success") {
+            window.location.href = "{% url 'app:success' %}?amount="
+                + result.deposit.amount
+                + "&tx_ref=" + result.deposit.tx_ref;
+          } else {
+            window.location.href = "{% url 'app:failed' %}";
+          }
+
+        } catch (err) {
+            window.location.href = "{% url 'app:failed' %}";
+            }
+      },
+
+      onclose: function () {
+        showMsg("Payment window closed. No charge was made.", false);
+      },
+    });
+  });
+</script>
+{% endblock %}

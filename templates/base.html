@@ -59,6 +59,17 @@
             from { opacity: 1; transform: translateY(0); }
             to { opacity: 0; transform: translateY(-10px); }
         }
+
+        /* Remove number input arrows */
+#deposit-amount::-webkit-outer-spin-button,
+#deposit-amount::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#deposit-amount {
+    -moz-appearance: textfield; /* Firefox */
+}
     </style>
 </head>
 <body>
@@ -70,13 +81,15 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="{% url 'app:dashboard' %}"><i class="fa-solid fa-wallet"></i> Dashboard</a>
-                <a href="#"><i class="fa-solid fa-money-bill-transfer"></i> Transfer</a>
-                <a href="#"><i class="fa-solid fa-money-check-dollar"></i> Deposit</a>
-                <a href="#"><i class="fa-solid fa-list-ul"></i> Transaction History</a>
-                <a href="#"><i class="fa-regular fa-credit-card"></i> Cards</a>
-                <a href="#"><i class="fa-solid fa-box-open"></i> Products</a>
-                <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
-                <a href="#"><i class="fa-regular fa-bell"></i> Notifications <span style="background: var(--danger); color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; margin-left: auto;">1</span></a>
+                <a href="{% url 'app:transfer' %}"><i class="fa-solid fa-money-bill-transfer"></i> Transfer</a>
+                <a href="{% url 'app:deposit' %}"><i class="fa-solid fa-money-check-dollar"></i> Deposit</a>
+                <a href="{% url 'app:history' %}"><i class="fa-solid fa-list-ul"></i> Transaction History</a>
+                <a href="{% url 'app:cards' %}"><i class="fa-regular fa-credit-card"></i> Cards</a>
+                <a href="{% url 'app:products' %}"><i class="fa-solid fa-box-open"></i> Products</a>
+                <a href="{% url 'app:settings' %}"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="{% url 'app:notifications' %}"><i class="fa-regular fa-bell"></i> Notifications
+<!--                    <span style="background: var(&#45;&#45;danger); color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; margin-left: auto;">1</span>-->
+                </a>
             </nav>
         </aside>
         {% if messages %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}
+<title> Notifications | First National</title>
+{% endblock %}
+{% block content %}
+        <main class="main-content">
+            <div class="top-bar">
+                <h3>Secure Inbox</h3>
+                <a href="?read=true" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Mark All as Read</a>
+            </div>
+
+            <div class="card" style="padding: 0;">
+                <ul style="list-style: none;">
+                {% for notif in notifs %}
+                    {% if not notif.is_read %}
+                    <li style="padding: 1.5rem; border-bottom: 1px solid var(--border-color);
+                        background-color: {% if notif.is_read %}transparent{% else %}rgba(203, 160, 82, 0.05){% endif %};
+                        border-left: 4px solid var(--brand-accent);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <strong style="color: var(--brand-primary);">{{ notif.title }}</strong>
+                            <span style="font-size: 0.8rem; color: var(--text-secondary);">
+                                {{ notif.created_at|date:"N j, Y" }}, {{ notif.created_at|time:"g:i A" }}
+                            </span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">{{ notif.message }}</p>
+                    </li>
+                    {% else %}
+                    <li style="padding: 1.5rem; border-bottom: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <strong>{{ notif.title }}</strong>
+                            <span style="font-size: 0.8rem; color: var(--text-secondary);">{{ notif.created_at|date:"N j, Y" }}</span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                            {{ notif.message }}
+                        </p>
+                    </li>
+                    {% endif %}
+                {% empty %}
+                <li style="padding: 1.5rem; color: var(--text-secondary);">No notifications yet.</li>
+                {% endfor %}
+<!--                    <li style="padding: 1.5rem; border-bottom: 1px solid var(&#45;&#45;border-color);">-->
+<!--                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">-->
+<!--                            <strong>Monthly Statement Available</strong>-->
+<!--                            <span style="font-size: 0.8rem; color: var(&#45;&#45;text-secondary);">May 01, 2026</span>-->
+<!--                        </div>-->
+<!--                        <p style="font-size: 0.9rem; color: var(&#45;&#45;text-secondary);">Your electronic statement for April is now available to view and download.</p>-->
+<!--                    </li>-->
+                </ul>
+            </div>
+        </main>
+{% endblock %}

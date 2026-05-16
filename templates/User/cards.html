@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+<title>Manage Cards | First National</title>
+{% endblock %}
+{% block content %}
+        <main class="main-content">
+            <div class="top-bar">
+                <h3>Add Card</h3>
+            </div>
+
+            <!-- Centered Plus Box Container -->
+            <div style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+            <form action="" method="get" style="display: inline;">
+                <button name="add_card" type="submit" class="add-box" style="
+                    text-decoration: none;
+                    width: 200px;
+                    height: 200px;
+                    border: 2px dashed var(--border-color);
+                    border-radius: 12px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    transition: all 0.3s ease;
+                    color: var(--text-secondary);
+                    background: transparent;
+                ">
+                    <i class="fa-solid fa-plus" style="font-size: 3.5rem;"></i>
+                </button>
+            </form>
+            </div>
+        </main>
+{% endblock %}

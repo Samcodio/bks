@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}
+<title>Apply for loan | First National</title>
+{% endblock %}
+{% block content %}
+        <main class="main-content" style="display: flex; align-items: center; justify-content: center;">
+            <div class="card text-center" style="max-width: 500px; padding: 3rem 2rem;">
+                <i class="fa-solid fa-file-shield fa-3x mb-1" style="color: var(--text-secondary);"></i>
+                <h3 class="mb-1">Application Status</h3>
+
+                <div style="background-color: rgba(220, 38, 38, 0.1); border-left: 4px solid var(--danger); padding: 1rem; text-align: left; margin-bottom: 1.5rem;">
+                    <p style="color: var(--text-primary); font-weight: 500;">Currently Ineligible</p>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.5rem;">Based on our preliminary underwriting review, we are unable to extend loan offers to your account at this time.</p>
+                </div>
+
+                <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 2rem;">
+                    First National adheres to strict compliance and credit criteria. If you believe this is an error or wish to speak with a credit specialist regarding your profile, please contact our support desk.
+                </p>
+
+                <a href="{% url 'app:dashboard' %}" class="btn btn-primary">Return to Dashboard</a>
+            </div>
+        </main>
+{% endblock %}

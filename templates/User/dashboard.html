@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
 {% block title %}
 <title>Dashboard | First National</title>
 {% endblock %}
@@ -9,10 +10,10 @@
             <div class="top-bar">
                 <div>
                     <h3>Hello {{user.username}}.</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Last sign in: Today at 08:14 AM</p>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Last sign in: {{time|date:"F j, Y - h:i A" }}</p>
                 </div>
                 <div>
-                    <a href="settings.html" style="color: var(--text-secondary); margin-left: 15px;"><i class="fa-solid fa-user-circle fa-2x"></i></a>
+                    <a href="{% url 'app:settings' %}" style="color: var(--text-secondary); margin-left: 15px;"><i class="fa-solid fa-user-circle fa-2x"></i></a>
                 </div>
             </div>
 
@@ -22,10 +23,10 @@
                         <h4 style="font-family: var(--font-body); color: var(--text-secondary);">Account ID ({{user.account.account_genID}})</h4>
                         <i class="fa-solid fa-ellipsis-vertical" style="color: var(--text-secondary); cursor: pointer;"></i>
                     </div>
-                    <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem; font-family: var(--font-body);">${{user.account.balance}}</h2>
+                    <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem; font-family: var(--font-body);">${{user.account.balance|intcomma}}</h2>
                     <p style="color: var(--success); font-weight: 500; font-size: 0.9rem;">Available Balance</p>
                     <div class="mt-2" style="display: flex; gap: 10px;">
-                        <a href="#" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Transfer</a>
+                        <a href="{% url 'app:transfer' %}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Transfer</a>
                         <a href="#" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Pay Bills</a>
                     </div>
                 </div>
@@ -35,20 +36,25 @@
             <h3 class="mt-2 mb-1">Recent Transactions</h3>
             <div class="card" style="padding: 0;">
                 <ul style="list-style: none;">
+                    {% for x in transactions %}
                     <li style="padding: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <p style="font-weight: 500;">ACH ELECTRONIC CREDIT - PAYROLL</p>
-                            <p style="font-size: 0.85rem; color: var(--text-secondary);">Nov 12, 2024</p>
+                            <p style="font-weight: 500;">{{x.description}}</p>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">{{ x.created_at|date:"M d, Y" }}</p>
                         </div>
-                        <p class="text-success" style="font-weight: 600;">+$4,250.00</p>
+                        {% if x.transaction_type == 'DEPOSIT' %}
+                        <p style="font-weight: 600;">+${{x.amount|intcomma}}</p>
+                        {% elif x.transaction_type == 'WITHDRAWAL' %}
+                        <p style="font-weight: 600;">-${{x.amount|intcomma}}</p>
+                        {% endif %}
                     </li>
-                    <li style="padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <p style="font-weight: 500;">WHOLE FOODS MARKET</p>
-                            <p style="font-size: 0.85rem; color: var(--text-secondary);">Nov 11, 2024</p>
-                        </div>
-                        <p style="font-weight: 600;">-$142.30</p>
+                    {% empty %}
+                    <li class="no-results">
+                        <p colspan="5" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                            No transactions found.
+                        </p>
                     </li>
+                    {% endfor %}
                 </ul>
             </div>
         </main>

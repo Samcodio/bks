@@ -8,6 +8,7 @@ from django.dispatch import receiver
 
 
 class User(AbstractUser):
+    full_name = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=20, blank=True)
     is_verified   = models.BooleanField(default=False)
@@ -138,3 +139,5 @@ class Notification(models.Model):
 def create_token(sender, instance, created, **kwargs):
     if created:
         Account.objects.create(user=instance)
+
+

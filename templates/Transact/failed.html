@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Declined | First National</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="secure-wrapper">
+        <!-- We keep the sidebar to allow the user to navigate away easily -->
+        <main class="main-content" style="display: flex; align-items: center; justify-content: center; margin-left: 0; width: 100%;">
+            <div class="card text-center" style="max-width: 500px; padding: 4rem 2rem; border-top: 4px solid var(--danger);">
+                <div style="width: 80px; height: 80px; background: rgba(220, 38, 38, 0.1); color: var(--danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem;">
+                    <i class="fa-solid fa-xmark fa-3x"></i>
+                </div>
+                <h2 style="font-family: var(--font-body); margin-bottom: 1rem;">Transaction Declined</h2>
+<!--                <p style="color: var(&#45;&#45;text-primary); margin-bottom: 0.5rem; font-weight: 600;">Reason: Insufficient Available Funds</p>-->
+                <p style="color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 0.95rem; line-height: 1.6;">
+                    The requested transfer of **$2,500.00** exceeds your current available balance in Checking (...4921). Please review your balance or select a different account.
+                </p>
+
+                <div class="grid-2">
+                    <a href="{% url 'app:deposit' %}" class="btn btn-primary">Retry Transaction</a>
+                    <a href="support.html" class="btn btn-outline">Contact Support</a>
+                </div>
+
+                <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+                    <a href="{% url 'app:dashboard' %}" style="color: var(--text-secondary); font-size: 0.9rem; text-decoration: none;">
+                        <i class="fa-solid fa-arrow-left"></i> Return to Dashboard
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
