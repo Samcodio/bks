@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
-import os
+import os, dj_database_url
 from pathlib import Path
 from django.contrib.messages import constants as message_constants
 from dotenv import load_dotenv
@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-*ga0juf!#hi21@ugh5nb0*@@!ue3y8@)t_3#w&sc&uaj+j%#4m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["x"]
 
 
 # Application definition
@@ -96,6 +96,13 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+# DATABASES = {
+#     "default": dj_database_url.parse(os.getenv("DATABASE_URL"))
+# }
+#
+# DATABASES['default']['CONN_MAX_AGE'] = 60
 
 
 # Password validation
