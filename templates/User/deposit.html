@@ -120,7 +120,7 @@ function showMsg(message, success = true) {
 
     FlutterwaveCheckout({
       public_key:      "{{ flw_public_key }}",   // from Django context
-      tx_ref:          "dep-" + Date.now(),
+      tx_ref:          "dep-{{ request.user.id }}-" + Date.now(),
       amount:          amount,
       currency:        "USD",
       payment_options: "card",

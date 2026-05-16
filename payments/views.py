@@ -150,7 +150,8 @@ def deposit_redirect(request):
                 from django.contrib.auth import get_user_model
                 User = get_user_model()
                 try:
-                    user = User.objects.get(email=email)
+                    user_id = tx_ref.split("-")[1]  # extract from "dep-42-timestamp"
+                    user = User.objects.get(id=user_id)
                     account = user.account
                     inital_bal = account.balance
                     account.balance += tx["amount"]
