@@ -132,6 +132,8 @@ def deposit_redirect(request):
     tx_ref         = data.get("txRef")     # note: "txRef" not "tx_ref"
     currency       = data.get("currency")
     amount         = data.get("amount")
+    customer       = data.get("customer", {})
+    email          = customer.get("email")
 
     if status == "successful" and transaction_id and currency == "USD":
         # verify with Flutterwave API
@@ -145,10 +147,16 @@ def deposit_redirect(request):
 
             if tx["status"] == "successful" and tx["currency"] == "USD":
                 # credit account
-                account = request.user.account
-                inital_bal = account.balance
-                account.balance += tx["amount"]
-                account.save()
+                from django.contrib.auth import get_user_model
+                User = get_user_model()
+                try:
+                    user = User.objects.get(email=email)
+                    account = user.account
+                    inital_bal = account.balance
+                    account.balance += tx["amount"]
+                    account.save()
+                except User.DoesNotExist:
+                    return redirect("app:failed")
 
                 Deposit.objects.get_or_create(
                     transaction_id=str(tx["id"]),
@@ -163,7 +171,7 @@ def deposit_redirect(request):
                     }
                 )
                 Transaction.objects.get_or_create(
-                    account=request.user.account,
+                    account=account,
                     transaction_type="DEPOSIT",
                     amount=tx["amount"],
                     balance_before=inital_bal,
