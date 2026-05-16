@@ -117,73 +117,104 @@ def flutterwave_webhook(request):
 
 
 def deposit_redirect(request):
-    raw = request.GET.get("response")  # 👈 this is where everything is
+    raw = request.GET.get("response")
 
     if not raw:
+        print("FAILED: no raw response")
         return redirect("app:failed")
 
-    # decode and parse the JSON
-    data = json.loads(unquote(raw))
-
-    print("Flutterwave data:", data)  # confirm it works
+    try:
+        data = json.loads(unquote(raw))
+        print("Flutterwave data:", data)
+    except Exception as e:
+        print(f"FAILED: could not parse response - {e}")
+        return redirect("app:failed")
 
     status         = data.get("status")
-    transaction_id = data.get("id")        # note: "id" not "transaction_id"
-    tx_ref         = data.get("txRef")     # note: "txRef" not "tx_ref"
+    transaction_id = data.get("id")
+    tx_ref         = data.get("txRef")
     currency       = data.get("currency")
     amount         = data.get("amount")
     customer       = data.get("customer", {})
     email          = customer.get("email")
 
+    print(f"status={status} | tx_id={transaction_id} | currency={currency} | tx_ref={tx_ref}")
+
     if status == "successful" and transaction_id and currency == "USD":
-        # verify with Flutterwave API
-        url = f"https://api.flutterwave.com/v3/transactions/{transaction_id}/verify"
-        headers = {"Authorization": f"Bearer {settings.FLW_SECRET_KEY}"}
-        response = requests.get(url, headers=headers)
-        verified = response.json()
+        try:
+            url = f"https://api.flutterwave.com/v3/transactions/{transaction_id}/verify"
+            headers = {"Authorization": f"Bearer {settings.FLW_SECRET_KEY}"}
+            response = requests.get(url, headers=headers)
+            verified = response.json()
+            print(f"VERIFIED: {verified.get('status')}")
+        except Exception as e:
+            print(f"FAILED: verification request error - {e}")
+            return redirect("app:failed")
 
         if verified.get("status") == "success":
             tx = verified["data"]
+            print(f"TX STATUS: {tx['status']} | TX CURRENCY: {tx['currency']}")
 
             if tx["status"] == "successful" and tx["currency"] == "USD":
-                # credit account
                 from django.contrib.auth import get_user_model
                 User = get_user_model()
                 try:
-                    user_id = tx_ref.split("-")[1]  # extract from "dep-42-timestamp"
+                    user_id = tx_ref.split("-")[1]
+                    print(f"USER ID: {user_id}")
                     user = User.objects.get(id=user_id)
                     account = user.account
                     inital_bal = account.balance
                     account.balance += tx["amount"]
                     account.save()
+                    print(f"BALANCE UPDATED: {inital_bal} -> {account.balance}")
                 except User.DoesNotExist:
+                    print(f"FAILED: no user with id={user_id}")
+                    return redirect("app:failed")
+                except (IndexError, ValueError) as e:
+                    print(f"FAILED: tx_ref parse error - {e}")
                     return redirect("app:failed")
 
-                Deposit.objects.get_or_create(
-                    transaction_id=str(tx["id"]),
-                    defaults={
-                        "tx_ref":         tx["tx_ref"],
-                        "amount":         tx["amount"],
-                        "currency":       tx["currency"],
-                        "customer_email": tx["customer"]["email"],
-                        "customer_name":  tx["customer"]["name"],
-                        "status":         "successful",
-                        "verified_at":    timezone.now(),
-                    }
-                )
-                Transaction.objects.get_or_create(
-                    account=account,
-                    transaction_type="DEPOSIT",
-                    amount=tx["amount"],
-                    balance_before=inital_bal,
-                    balance_after=account.balance,
-                    description="FL/Card",
-                    reference=tx["tx_ref"],
-                    status="COMPLETED",
-                )
+                try:
+                    Deposit.objects.get_or_create(
+                        transaction_id=str(tx["id"]),
+                        defaults={
+                            "tx_ref":         tx["tx_ref"],
+                            "amount":         tx["amount"],
+                            "currency":       tx["currency"],
+                            "customer_email": tx["customer"]["email"],
+                            "customer_name":  tx["customer"]["name"],
+                            "status":         "successful",
+                            "verified_at":    timezone.now(),
+                        }
+                    )
+                    print("DEPOSIT SAVED")
+                except Exception as e:
+                    print(f"FAILED: deposit save error - {e}")
+                    return redirect("app:failed")
 
+                try:
+                    Transaction.objects.get_or_create(
+                        account=account,
+                        transaction_type="DEPOSIT",
+                        amount=tx["amount"],
+                        balance_before=inital_bal,
+                        balance_after=account.balance,
+                        description="FL/Card",
+                        reference=tx["tx_ref"],
+                        status="COMPLETED",
+                    )
+                    print("TRANSACTION SAVED")
+                except Exception as e:
+                    print(f"FAILED: transaction save error - {e}")
+                    return redirect("app:failed")
+
+                print("=== ALL GOOD - REDIRECTING TO SUCCESS ===")
                 return redirect(
                     f"{reverse('app:success')}?amount={tx['amount']}&tx_ref={tx['tx_ref']}"
                 )
+        else:
+            print(f"FAILED: verified status = {verified.get('status')}")
+    else:
+        print(f"FAILED: outer condition — status={status} | currency={currency} | tx_id={transaction_id}")
 
     return redirect("app:failed")

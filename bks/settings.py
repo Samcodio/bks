@@ -94,19 +94,26 @@ CSRF_TRUSTED_ORIGINS = [
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.parse(os.getenv("DATABASE_URL"))
 }
 
+DATABASES['default']['CONN_MAX_AGE'] = 60
 
-# DATABASES = {
-#     "default": dj_database_url.parse(os.getenv("DATABASE_URL"))
-# }
+
+# database_url = "postgresql://bks_6dsl_user:vXYcZLhvO9Ueur8U8lpVPiCPPQ1ezJZy@dpg-d83rran7f7vs739fe66g-a.oregon-postgres.render.com/bks_6dsl"
 #
-# DATABASES['default']['CONN_MAX_AGE'] = 60
+# DATABASES = {
+#     "default": dj_database_url.parse(database_url)
+# }
 
 
 # Password validation
