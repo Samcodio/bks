@@ -175,29 +175,29 @@
                 <tr style="border-bottom: 1px solid var(--border-color);">
                     <td data-label="User" style="padding: 1rem 1.5rem;">
                         <div>
-                            {% if client.is_active %}
-                                <strong>{{ client.username }}</strong><br>
-                                <span style="font-size: 0.8rem; color: var(--text-secondary);">{{ client.email }}</span>
+                            {% if client.user.is_active %}
+                                <strong>{{ client.user.username }}</strong><br>
+                                <span style="font-size: 0.8rem; color: var(--text-secondary);">{{ client.user.email }}</span>
                             {% else %}
                                 <div style="background: rgba(220, 38, 38, 0.1); color: var(--danger); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">
-                                    <strong>{{ client.username }}</strong><br>
-                                    <span style="font-size: 0.8rem; color: var(--text-secondary);">{{ client.email }}</span>
+                                    <strong>{{ client.user.username }}</strong><br>
+                                    <span style="font-size: 0.8rem; color: var(--text-secondary);">{{ client.user.email }}</span>
                                 </div>
                             {% endif %}
                         </div>
                     </td>
 
                     <td data-label="Account ID" style="padding: 1rem 1.5rem; font-family: var(--font-body); color: var(--text-secondary);">
-                        <div>{{ client.account.account_genID }}</div>
+                        <div>{{ client.account_genID }}</div>
                     </td>
 
                     <td data-label="Balance" style="padding: 1rem 1.5rem; font-weight: 600;">
-                        <div>${{ client.account.balance|intcomma }}</div>
+                        <div>${{ client.balance|intcomma }}</div>
                     </td>
 
                     <td data-label="Status" style="padding: 1rem 1.5rem;">
                         <div>
-                            {% if client.is_active %}
+                            {% if client.user.is_active %}
                                 <span style="background: rgba(5, 150, 105, 0.1); color: var(--success); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">Active</span>
                             {% else %}
                                 <span style="background: rgba(220, 38, 38, 0.1); color: var(--danger); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">Banned</span>
@@ -211,21 +211,21 @@
                                 <i class="fa-solid fa-coins"></i> Balance
                             </a>
 
-                            {% if client.is_active %}
-                                <a href="{% url 'app:ban_user' client.id %}"
+                            {% if client.user.is_active %}
+                                <a href="{% url 'app:ban_user' client.user.id %}"
                                    class="btn"
                                    style="background: var(--warning); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem;"
-                                   onclick="return confirm('Ban {{ client.username }}?');">Ban</a>
+                                   onclick="return confirm('Ban {{ client.user.username }}?');">Ban</a>
                             {% else %}
-                                <a href="{% url 'app:unban_user' client.id %}"
+                                <a href="{% url 'app:unban_user' client.user.id %}"
                                    class="btn btn-primary"
                                    style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Unban</a>
                             {% endif %}
 
-                            <a href="{% url 'app:delete_user' client.id %}"
+                            <a href="{% url 'app:delete_user' client.user.id %}"
                                class="btn"
                                style="background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem;"
-                               onclick="return confirm('Are you sure you want to permanently delete {{ client.username }}?');">
+                               onclick="return confirm('Are you sure you want to permanently delete {{ client.user.username }}?');">
                                 <i class="fa-solid fa-trash"></i>
                             </a>
                         </div>

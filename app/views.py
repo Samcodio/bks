@@ -202,9 +202,9 @@ def superuser_required(view_func):
 
 @login_required(login_url='accounts:login')
 def userList(request):
-    users = User.objects.all().order_by('-username')
+    accounts = Account.objects.all().order_by('-user')
 
-    paginator = Paginator(users, 80)  # 20 per page
+    paginator = Paginator(accounts, 80)  # 20 per page
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
     context = {
@@ -240,10 +240,7 @@ def delete_user(request, user_id):
     return redirect('app:users')
 
 
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib import messages
-from django.utils import timezone
+
 
 def superuser_required(view_func):
     return user_passes_test(lambda u: u.is_superuser)(view_func)
@@ -251,10 +248,8 @@ def superuser_required(view_func):
 
 @superuser_required
 def changeBalance(request, id):
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-    target_user = get_object_or_404(User, id=id)
-    account = target_user.account
+    account = get_object_or_404(Account, id=id)
+    target_user = account.user
 
     if request.method == 'POST':
         action_type = request.POST.get('action_type')
