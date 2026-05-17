@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+<main class="main-content" style="display: flex; justify-content: center;">
+    <div style="width: 100%; max-width: 600px; margin-top: 2rem;">
+        <div class="top-bar" style="margin-bottom: 1.5rem;">
+            <h3>Manage Balance</h3>
+            <a href="{% url 'app:users' %}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;"><i class="fa-solid fa-arrow-left"></i> Back to Users</a>
+        </div>
+
+        <div class="card">
+            <!-- User Info Header -->
+            <div style="display: flex; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+                <div style="background: rgba(203, 160, 82, 0.1); padding: 15px; border-radius: 50%; margin-right: 15px;">
+                    <i class="fa-solid fa-user-tie fa-2x" style="color: var(--brand-accent);"></i>
+                </div>
+                <div>
+                    <h4 style="margin: 0;">{{ target_user.username }}</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem;">Account: {{ target_user.account.account_genID }}</p>
+                </div>
+            </div>
+
+            <!-- Current Balance Display -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <p style="color: var(--text-secondary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Current Balance</p>
+                <h2 style="font-size: 3rem; font-family: var(--font-body); color: var(--brand-primary);">${{ target_user.account.balance|intcomma }}</h2>
+            </div>
+
+            <!-- Form -->
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Action Type</label>
+                    <select name="action_type" class="form-control" style="padding: 0.8rem;" required>
+                        <option value="add">Add Funds (+)</option>
+                        <option value="subtract">Deduct Funds (-)</option>
+                        <option value="set">Set Exact Balance (=)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Amount ($)</label>
+                    <input type="number" name="amount" class="form-control" step="0.01" min="0" placeholder="0.00" style="padding: 0.8rem; font-size: 1.2rem; font-weight: bold;" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Admin Note / Reason (Optional)</label>
+                    <input type="text" name="admin_note" class="form-control" placeholder="e.g. Wire transfer correction" style="padding: 0.8rem;">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.05rem; margin-top: 1rem;">
+                    Update Balance
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}

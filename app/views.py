@@ -2,10 +2,11 @@ from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from .models import *
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import ChangePasswordForm
 from django.contrib import messages
 from django.conf import settings
+from decimal import Decimal
 
 # Create your views here.
 
@@ -195,3 +196,120 @@ def addPin(request):
     context = {}
     return render(request, 'User/pin.html', context)
 
+def superuser_required(view_func):
+    return user_passes_test(lambda u: u.is_superuser)(view_func)
+
+
+@login_required(login_url='accounts:login')
+def userList(request):
+    users = User.objects.all().order_by('-username')
+
+    paginator = Paginator(users, 80)  # 20 per page
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'users': page_obj
+    }
+    return render(request, 'Admin/users.html', context)
+
+
+@superuser_required
+def ban_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.is_active = False
+    user.save()
+    messages.success(request, f"{user.username} has been banned.")
+    return redirect('app:users')  # adjust to Sam's actual URL name
+
+
+@superuser_required
+def unban_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.is_active = True
+    user.save()
+    messages.success(request, f"{user.username} has been unbanned.")
+    return redirect('app:users')
+
+
+@superuser_required
+def delete_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    username = user.username
+    user.delete()
+    messages.success(request, f"{username} has been permanently deleted.")
+    return redirect('app:users')
+
+
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
+from django.utils import timezone
+
+def superuser_required(view_func):
+    return user_passes_test(lambda u: u.is_superuser)(view_func)
+
+
+@superuser_required
+def changeBalance(request, id):
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    target_user = get_object_or_404(User, id=id)
+    account = target_user.account
+
+    if request.method == 'POST':
+        action_type = request.POST.get('action_type')
+        admin_note  = request.POST.get('admin_note', '')
+
+        try:
+            amount = Decimal(request.POST.get('amount', '0'))
+            if amount < 0:
+                raise ValueError("Amount cannot be negative")
+        except Exception:
+            messages.error(request, "ERR_0x3E4F: Invalid amount entered.")
+            return redirect('app:change_balance', id=id)
+
+        initial_bal = account.balance
+
+        if action_type == 'add':
+            account.balance += amount
+            description = f"{admin_note or 'Credit Received'}"
+            transaction_type = "DEPOSIT"
+
+        elif action_type == 'subtract':
+            if amount > account.balance:
+                messages.error(request, "ERR_0x4A5B: Deduction amount exceeds current balance.")
+                return redirect('app:change_balance', id=id)
+            account.balance -= amount
+            description = f"{admin_note or 'Debit Received'}"
+            transaction_type = "WITHDRAWAL"
+
+        elif action_type == 'set':
+            account.balance = amount
+            description = f"{admin_note or 'Credit Received'}"
+            transaction_type = "DEPOSIT"
+
+        else:
+            messages.error(request, "ERR_0x5C6D: Invalid action type.")
+            return redirect('app:change_balance', id=id)
+
+        account.save()
+
+        # log the transaction
+        Transaction.objects.create(
+            account=account,
+            transaction_type=transaction_type,
+            amount=amount,
+            balance_before=initial_bal,
+            balance_after=account.balance,
+            description=description,
+            reference=f"ADMIN-{int(timezone.now().timestamp())}",
+            status="COMPLETED",
+        )
+
+        messages.success(request, f"Balance updated successfully. New balance: ${account.balance}")
+        return redirect('app:change_balance', id=id)
+
+    context = {
+        'target_user': target_user,
+    }
+    return render(request, 'Admin/changeBalance.html', context)

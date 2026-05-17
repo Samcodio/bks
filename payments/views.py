@@ -125,10 +125,10 @@ def deposit_redirect(request):
         transaction_id = request.GET.get("transaction_id")
         tx_ref         = request.GET.get("tx_ref")
 
-        messages.error(request, f"NO RAW — fallback params: status={status} tx_id={transaction_id} tx_ref={tx_ref}")
+        # messages.error(request, f"NO RAW — fallback params: status={status} tx_id={transaction_id} tx_ref={tx_ref}")
 
         if not transaction_id:
-            messages.error(request, "ERR_0x1A2B: No response payload received.")
+            # messages.error(request, "ERR_0x1A2B: No response payload received.")
             return redirect("app:failed")
 
         data = {
@@ -142,7 +142,7 @@ def deposit_redirect(request):
         try:
             data = json.loads(unquote(raw))
         except Exception as e:
-            messages.error(request, f"ERR_0x2C3D: Failed to parse response. Ref: {e}")
+            # messages.error(request, f"ERR_0x2C3D: Failed to parse response. Ref: {e}")
             return redirect("app:failed")
 
     # ✅ from here data is always set correctly
@@ -161,7 +161,7 @@ def deposit_redirect(request):
             response = requests.get(url, headers=headers)
             verified = response.json()
         except Exception as e:
-            messages.error(request, f"FAILED: verification request error - {e}")
+            # messages.error(request, f"FAILED: verification request error - {e}")
             return redirect("app:failed")
 
         if verified.get("status") == "success":
@@ -178,10 +178,10 @@ def deposit_redirect(request):
                     account.balance += tx["amount"]
                     account.save()
                 except User.DoesNotExist:
-                    messages.error(request, f"FAILED: no user with id={user_id}")
+                    # messages.error(request, f"FAILED: no user with id={user_id}")
                     return redirect("app:failed")
                 except (IndexError, ValueError) as e:
-                    messages.error(request, f"FAILED: tx_ref parse error - {e}")
+                    # messages.error(request, f"FAILED: tx_ref parse error - {e}")
                     return redirect("app:failed")
 
                 try:
@@ -198,7 +198,7 @@ def deposit_redirect(request):
                         }
                     )
                 except Exception as e:
-                    messages.error(request, f"FAILED: deposit save error - {e}")
+                    # messages.error(request, f"FAILED: deposit save error - {e}")
                     return redirect("app:failed")
 
                 try:
@@ -213,15 +213,15 @@ def deposit_redirect(request):
                         status="COMPLETED",
                     )
                 except Exception as e:
-                    messages.error(request, f"FAILED: transaction save error - {e}")
+                    # messages.error(request, f"FAILED: transaction save error - {e}")
                     return redirect("app:failed")
 
                 return redirect(
                     f"{reverse('app:success')}?amount={tx['amount']}&tx_ref={tx['tx_ref']}"
                 )
         else:
-            messages.error(request, f"FAILED: verified status = {verified.get('status')}")
+            print(f"FAILED: verified status = {verified.get('status')}")
     else:
-        messages.error(request, f"FAILED: outer condition — status={status} | currency={currency} | tx_id={transaction_id}")
+        print(f"FAILED: outer condition — status={status} | currency={currency} | tx_id={transaction_id}")
 
     return redirect("app:failed")

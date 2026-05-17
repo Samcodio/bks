@@ -9,24 +9,24 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-        {% if messages %}
-        <div id="django-toast-container">
-            {% for message in messages %}
-                <div class="django-toast {{ message.tags }}" role="alert">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        {% if message.tags == 'success' %}
-                            <i class="fa-solid fa-circle-check"></i>
-                        {% elif message.tags == 'warning' %}
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                        {% elif message.tags == 'error' %}
-                            <i class="fa-solid fa-circle-exclamation"></i>
-                        {% endif %}
-                        <span>{{ message }}</span>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+<!--        {% if messages %}-->
+<!--        <div id="django-toast-container">-->
+<!--            {% for message in messages %}-->
+<!--                <div class="django-toast {{ message.tags }}" role="alert">-->
+<!--                    <div style="display: flex; align-items: center; gap: 12px;">-->
+<!--                        {% if message.tags == 'success' %}-->
+<!--                            <i class="fa-solid fa-circle-check"></i>-->
+<!--                        {% elif message.tags == 'warning' %}-->
+<!--                            <i class="fa-solid fa-triangle-exclamation"></i>-->
+<!--                        {% elif message.tags == 'error' %}-->
+<!--                            <i class="fa-solid fa-circle-exclamation"></i>-->
+<!--                        {% endif %}-->
+<!--                        <span>{{ message }}</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            {% endfor %}-->
+<!--        </div>-->
+<!--        {% endif %}-->
     <div class="secure-wrapper">
         <!-- We keep the sidebar to allow the user to navigate away easily -->
         <main class="main-content" style="display: flex; align-items: center; justify-content: center; margin-left: 0; width: 100%;">

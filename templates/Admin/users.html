@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+<style>
+    .filter-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+    .filter-bar input, .filter-bar select { padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--surface-color); color: var(--text-primary); }
+
+    /* Desktop default for actions */
+    .actions-wrapper {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    /* Pagination */
+    .pagination-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid var(--border-color);
+        background: var(--surface-color);
+        border-radius: 0 0 8px 8px;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .pagination-info {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .pagination-controls {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .page-btn {
+        padding: 0.35rem 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background: var(--surface-color);
+        color: var(--text-primary);
+        font-size: 0.85rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .page-btn:hover {
+        background: var(--brand-primary);
+        color: white;
+        border-color: var(--brand-primary);
+    }
+
+    .page-btn.active {
+        background: var(--brand-primary);
+        color: white;
+        border-color: var(--brand-primary);
+        font-weight: 600;
+    }
+
+    .page-btn.disabled {
+        opacity: 0.4;
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+
+    /* Mobile Responsive Table Mechanics */
+    @media (max-width: 768px) {
+        .responsive-table table,
+        .responsive-table thead,
+        .responsive-table tbody,
+        .responsive-table th,
+        .responsive-table td,
+        .responsive-table tr {
+            display: block;
+        }
+
+        .responsive-table thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        .responsive-table tr {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            overflow: hidden;
+        }
+
+        .responsive-table td {
+            border: none;
+            border-bottom: 1px dashed var(--border-color);
+            position: relative;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: right;
+        }
+
+        .responsive-table td:last-child {
+            border-bottom: 0;
+            padding-bottom: 1.5rem;
+        }
+
+        .responsive-table td::before {
+            content: attr(data-label);
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-align: left;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .responsive-table td.actions-cell {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .responsive-table td.actions-cell::before {
+            margin-bottom: 1rem;
+        }
+
+        .actions-wrapper {
+            width: 100%;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .actions-wrapper .btn {
+            flex: 1;
+            text-align: center;
+            min-width: 30%;
+        }
+
+        .pagination-wrapper {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+    }
+</style>
+
+<main class="main-content">
+    <div class="top-bar">
+        <div>
+            <h3>User Management</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Admin Dashboard Overview</p>
+        </div>
+    </div>
+
+    <div class="card responsive-table" style="padding: 0; border: none; background: transparent; box-shadow: none;">
+        <div class="filter-bar">
+            <input type="text" id="search-input" placeholder="Search by username..." style="flex: 1;" oninput="searchUsers(this.value)">
+        </div>
+        <table style="width: 100%; border-collapse: collapse; text-align: left; background: var(--surface-color); border-radius: 8px 8px 0 0; border: 1px solid var(--border-color); border-bottom: none;">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--border-color); background-color: rgba(15, 32, 66, 0.03);">
+                    <th style="padding: 1rem 1.5rem; color: var(--text-secondary); font-weight: 500;">User</th>
+                    <th style="padding: 1rem 1.5rem; color: var(--text-secondary); font-weight: 500;">Account ID</th>
+                    <th style="padding: 1rem 1.5rem; color: var(--text-secondary); font-weight: 500;">Balance</th>
+                    <th style="padding: 1rem 1.5rem; color: var(--text-secondary); font-weight: 500;">Status</th>
+                    <th style="padding: 1rem 1.5rem; color: var(--text-secondary); font-weight: 500; text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in users %}
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td data-label="User" style="padding: 1rem 1.5rem;">
+                        <div>
+                            {% if client.is_active %}
+                                <strong>{{ client.username }}</strong><br>
+                                <span style="font-size: 0.8rem; color: var(--text-secondary);">{{ client.email }}</span>
+                            {% else %}
+                                <div style="background: rgba(220, 38, 38, 0.1); color: var(--danger); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">
+                                    <strong>{{ client.username }}</strong><br>
+                                    <span style="font-size: 0.8rem; color: var(--text-secondary);">{{ client.email }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </td>
+
+                    <td data-label="Account ID" style="padding: 1rem 1.5rem; font-family: var(--font-body); color: var(--text-secondary);">
+                        <div>{{ client.account.account_genID }}</div>
+                    </td>
+
+                    <td data-label="Balance" style="padding: 1rem 1.5rem; font-weight: 600;">
+                        <div>${{ client.account.balance|intcomma }}</div>
+                    </td>
+
+                    <td data-label="Status" style="padding: 1rem 1.5rem;">
+                        <div>
+                            {% if client.is_active %}
+                                <span style="background: rgba(5, 150, 105, 0.1); color: var(--success); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">Active</span>
+                            {% else %}
+                                <span style="background: rgba(220, 38, 38, 0.1); color: var(--danger); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">Banned</span>
+                            {% endif %}
+                        </div>
+                    </td>
+
+                    <td data-label="Actions" class="actions-cell" style="padding: 1rem 1.5rem;">
+                        <div class="actions-wrapper">
+                            <a href="{% url 'app:change_balance' client.id %}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+                                <i class="fa-solid fa-coins"></i> Balance
+                            </a>
+
+                            {% if client.is_active %}
+                                <a href="{% url 'app:ban_user' client.id %}"
+                                   class="btn"
+                                   style="background: var(--warning); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem;"
+                                   onclick="return confirm('Ban {{ client.username }}?');">Ban</a>
+                            {% else %}
+                                <a href="{% url 'app:unban_user' client.id %}"
+                                   class="btn btn-primary"
+                                   style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Unban</a>
+                            {% endif %}
+
+                            <a href="{% url 'app:delete_user' client.id %}"
+                               class="btn"
+                               style="background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem;"
+                               onclick="return confirm('Are you sure you want to permanently delete {{ client.username }}?');">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-secondary);">No users found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination-wrapper">
+            <div class="pagination-info">
+                Showing {{ users.start_index }}–{{ users.end_index }} of {{ users.paginator.count }} users
+            </div>
+            <div class="pagination-controls">
+                {% if users.has_previous %}
+                    <a href="?page=1" class="page-btn">«</a>
+                    <a href="?page={{ users.previous_page_number }}" class="page-btn">‹</a>
+                {% else %}
+                    <span class="page-btn disabled">«</span>
+                    <span class="page-btn disabled">‹</span>
+                {% endif %}
+
+                {% for num in users.paginator.page_range %}
+                    {% if users.number == num %}
+                        <span class="page-btn active">{{ num }}</span>
+                    {% elif num > users.number|add:'-3' and num < users.number|add:'3' %}
+                        <a href="?page={{ num }}" class="page-btn">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if users.has_next %}
+                    <a href="?page={{ users.next_page_number }}" class="page-btn">›</a>
+                    <a href="?page={{ users.paginator.num_pages }}" class="page-btn">»</a>
+                {% else %}
+                    <span class="page-btn disabled">›</span>
+                    <span class="page-btn disabled">»</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    function searchUsers(query) {
+        const rows = document.querySelectorAll("tbody tr");
+        const q = query.toLowerCase().trim();
+
+        rows.forEach(row => {
+            const username = row.querySelector("td:first-child strong");
+            if (username) {
+                const match = username.textContent.toLowerCase().includes(q);
+                row.style.display = match ? "" : "none";
+            }
+        });
+    }
+</script>
+{% endblock %}
