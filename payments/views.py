@@ -121,16 +121,31 @@ def deposit_redirect(request):
     raw = request.GET.get("response")
 
     if not raw:
-        messages.error(request, "FAILED: no raw response")
-        return redirect("app:failed")
+        status         = request.GET.get("status")
+        transaction_id = request.GET.get("transaction_id")
+        tx_ref         = request.GET.get("tx_ref")
 
-    try:
-        data = json.loads(unquote(raw))
-        print("Flutterwave data:", data)
-    except Exception as e:
-        messages.error(request, f"FAILED: could not parse response - {e}")
-        return redirect("app:failed")
+        messages.error(request, f"NO RAW — fallback params: status={status} tx_id={transaction_id} tx_ref={tx_ref}")
 
+        if not transaction_id:
+            messages.error(request, "ERR_0x1A2B: No response payload received.")
+            return redirect("app:failed")
+
+        data = {
+            "status": status,
+            "id": transaction_id,
+            "txRef": tx_ref,
+            "currency": "USD",
+        }
+
+    else:
+        try:
+            data = json.loads(unquote(raw))
+        except Exception as e:
+            messages.error(request, f"ERR_0x2C3D: Failed to parse response. Ref: {e}")
+            return redirect("app:failed")
+
+    # ✅ from here data is always set correctly
     status         = data.get("status")
     transaction_id = data.get("id")
     tx_ref         = data.get("txRef")
@@ -139,35 +154,29 @@ def deposit_redirect(request):
     customer       = data.get("customer", {})
     email          = customer.get("email")
 
-    print(f"status={status} | tx_id={transaction_id} | currency={currency} | tx_ref={tx_ref}")
-
     if status == "successful" and transaction_id and currency == "USD":
         try:
             url = f"https://api.flutterwave.com/v3/transactions/{transaction_id}/verify"
             headers = {"Authorization": f"Bearer {settings.FLW_SECRET_KEY}"}
             response = requests.get(url, headers=headers)
             verified = response.json()
-            print(f"VERIFIED: {verified.get('status')}")
         except Exception as e:
             messages.error(request, f"FAILED: verification request error - {e}")
             return redirect("app:failed")
 
         if verified.get("status") == "success":
             tx = verified["data"]
-            print(f"TX STATUS: {tx['status']} | TX CURRENCY: {tx['currency']}")
 
             if tx["status"] == "successful" and tx["currency"] == "USD":
                 from django.contrib.auth import get_user_model
                 User = get_user_model()
                 try:
                     user_id = tx_ref.split("-")[1]
-                    print(f"USER ID: {user_id}")
                     user = User.objects.get(id=user_id)
                     account = user.account
                     inital_bal = account.balance
                     account.balance += tx["amount"]
                     account.save()
-                    messages.error(request, f"BALANCE UPDATED: {inital_bal} -> {account.balance}")
                 except User.DoesNotExist:
                     messages.error(request, f"FAILED: no user with id={user_id}")
                     return redirect("app:failed")
@@ -188,9 +197,8 @@ def deposit_redirect(request):
                             "verified_at":    timezone.now(),
                         }
                     )
-                    print("DEPOSIT SAVED")
                 except Exception as e:
-                    messages.error(request, "FAILED: deposit save error - {e}")
+                    messages.error(request, f"FAILED: deposit save error - {e}")
                     return redirect("app:failed")
 
                 try:
@@ -204,12 +212,10 @@ def deposit_redirect(request):
                         reference=tx["tx_ref"],
                         status="COMPLETED",
                     )
-                    print("TRANSACTION SAVED")
                 except Exception as e:
                     messages.error(request, f"FAILED: transaction save error - {e}")
                     return redirect("app:failed")
 
-                print("=== ALL GOOD - REDIRECTING TO SUCCESS ===")
                 return redirect(
                     f"{reverse('app:success')}?amount={tx['amount']}&tx_ref={tx['tx_ref']}"
                 )
