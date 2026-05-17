@@ -10,6 +10,7 @@ from django.utils import timezone
 from .models import Deposit
 import json
 from urllib.parse import unquote
+from django.contrib import messages
 
 
 # ── 1. Initiate deposit — returns public key + tx_ref to frontend ──
@@ -120,14 +121,14 @@ def deposit_redirect(request):
     raw = request.GET.get("response")
 
     if not raw:
-        print("FAILED: no raw response")
+        messages.error(request, "FAILED: no raw response")
         return redirect("app:failed")
 
     try:
         data = json.loads(unquote(raw))
         print("Flutterwave data:", data)
     except Exception as e:
-        print(f"FAILED: could not parse response - {e}")
+        messages.error(request, f"FAILED: could not parse response - {e}")
         return redirect("app:failed")
 
     status         = data.get("status")
@@ -148,7 +149,7 @@ def deposit_redirect(request):
             verified = response.json()
             print(f"VERIFIED: {verified.get('status')}")
         except Exception as e:
-            print(f"FAILED: verification request error - {e}")
+            messages.error(request, f"FAILED: verification request error - {e}")
             return redirect("app:failed")
 
         if verified.get("status") == "success":
@@ -166,12 +167,12 @@ def deposit_redirect(request):
                     inital_bal = account.balance
                     account.balance += tx["amount"]
                     account.save()
-                    print(f"BALANCE UPDATED: {inital_bal} -> {account.balance}")
+                    messages.error(request, f"BALANCE UPDATED: {inital_bal} -> {account.balance}")
                 except User.DoesNotExist:
-                    print(f"FAILED: no user with id={user_id}")
+                    messages.error(request, f"FAILED: no user with id={user_id}")
                     return redirect("app:failed")
                 except (IndexError, ValueError) as e:
-                    print(f"FAILED: tx_ref parse error - {e}")
+                    messages.error(request, f"FAILED: tx_ref parse error - {e}")
                     return redirect("app:failed")
 
                 try:
@@ -189,7 +190,7 @@ def deposit_redirect(request):
                     )
                     print("DEPOSIT SAVED")
                 except Exception as e:
-                    print(f"FAILED: deposit save error - {e}")
+                    messages.error(request, "FAILED: deposit save error - {e}")
                     return redirect("app:failed")
 
                 try:
@@ -205,7 +206,7 @@ def deposit_redirect(request):
                     )
                     print("TRANSACTION SAVED")
                 except Exception as e:
-                    print(f"FAILED: transaction save error - {e}")
+                    messages.error(request, f"FAILED: transaction save error - {e}")
                     return redirect("app:failed")
 
                 print("=== ALL GOOD - REDIRECTING TO SUCCESS ===")
@@ -213,8 +214,8 @@ def deposit_redirect(request):
                     f"{reverse('app:success')}?amount={tx['amount']}&tx_ref={tx['tx_ref']}"
                 )
         else:
-            print(f"FAILED: verified status = {verified.get('status')}")
+            messages.error(request, f"FAILED: verified status = {verified.get('status')}")
     else:
-        print(f"FAILED: outer condition — status={status} | currency={currency} | tx_id={transaction_id}")
+        messages.error(request, f"FAILED: outer condition — status={status} | currency={currency} | tx_id={transaction_id}")
 
     return redirect("app:failed")
