@@ -11,6 +11,11 @@ from decimal import Decimal
 # Create your views here.
 
 
+def landing(request):
+    context = {}
+    return render(request, 'User/index.html', context)
+
+
 @login_required(login_url='accounts:login')
 def dashboard(request):
     user = request.user
@@ -45,7 +50,7 @@ def setting(request):
 @login_required(login_url='accounts:login')
 def makeTransfer(request):
     if 'transact' in request.GET:
-        messages.error(request, 'FAULT_0x78C3: Upstream gateway returned an unexpected response during authorization. Ref: TXN-992-DELTA. Please contact support.')
+        messages.warning(request, 'AUTH_0xWDC3: Submit Legal Evidence to Complete Transaction. Ref: TXN-992-DELTA. Please contact support.')
         return redirect("app:transfer")
     context = {}
     return render(request, 'Transact/transfer.html', context)
@@ -68,7 +73,7 @@ def history(request):
 @login_required(login_url='accounts:login')
 def cards(request):
     if 'add_card' in request.GET:
-        verifiedOrNot(request)
+        messages.warning(request, 'Card Not Available')
         return redirect('app:cards')
     context = {}
     return render(request, 'User/cards.html', context)
@@ -85,7 +90,7 @@ def verifiedOrNot(request):
 @login_required(login_url='accounts:login')
 def products(request):
     if 'rates' in request.GET:
-        verifiedOrNot(request)
+        messages.warning(request, 'AUTH_0xWDC3: Submit Legal Evidence To Proceed With This Action. Ref: TXN-992-DELTA. Please contact support.')
         return redirect('app:products')
     context = {}
     return render(request, 'User/products.html', context)
@@ -297,7 +302,7 @@ def changeBalance(request, id):
             balance_before=initial_bal,
             balance_after=account.balance,
             description=description,
-            reference=f"ADMIN-{int(timezone.now().timestamp())}",
+            reference=f"TRT-{int(timezone.now().timestamp())}",
             status="COMPLETED",
         )
 

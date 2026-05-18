@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First National | Premium Corporate & Retail Banking</title>
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #070f21;
+            --bg-surface: #0f2042;
+            --brand-primary: #cbba94;
+            --brand-accent: #e5cb93;
+            --text-main: #ffffff;
+            --text-muted: #a0aec0;
+            --success: #10b981;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Inter', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Utility Layout Classes */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 2rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .btn-primary {
+            background-color: var(--brand-accent);
+            color: #070f21;
+            border: 1px solid var(--brand-accent);
+        }
+        .btn-primary:hover {
+            background-color: #ffffff;
+            border-color: #ffffff;
+            transform: translateY(-2px);
+        }
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+        .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: #ffffff;
+        }
+
+        /* Navigation Header */
+        header {
+            width: 100%;
+            background-color: rgba(7, 15, 33, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .utility-bar {
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.5rem 0;
+            font-size: 0.8rem;
+        }
+        .utility-flex {
+            display: flex;
+            justify-content: flex-end;
+            gap: 24px;
+        }
+        .utility-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .utility-link:hover { color: var(--brand-accent); }
+
+        .main-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0;
+            position: relative;
+        }
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .logo span { color: var(--brand-accent); }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-item a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+        .nav-item a:hover { color: var(--brand-accent); }
+
+        /* Asymmetric Hero Section */
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            min-height: calc(85vh - 100px);
+            border-bottom: 1px solid var(--border-color);
+            align-items: stretch;
+        }
+        .hero-content {
+            padding: 6rem 4rem 6rem 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .hero-tagline {
+            color: var(--brand-accent);
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.2rem, 4vw, 3.5rem);
+            line-height: 1.15;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        .hero-desc {
+            color: var(--text-muted);
+            font-size: clamp(1rem, 1.5vw, 1.15rem);
+            margin-bottom: 2.5rem;
+            max-width: 540px;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .hero-image-pane {
+            background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .hero-image-pane::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, var(--bg-base) 0%, transparent 40%);
+        }
+
+        /* Trust Banner */
+        .trust-strip {
+            background-color: rgba(15, 32, 66, 0.4);
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .trust-flex {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            align-items: center;
+        }
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .trust-item i {
+            color: var(--brand-accent);
+            font-size: 1.25rem;
+        }
+
+        /* Interactive Product Section */
+        .products-section { padding: 6rem 0; }
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            margin-bottom: 1rem;
+        }
+        .section-subtitle {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Rate Tabs System */
+        .tab-container {
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+            background-color: var(--bg-surface);
+            padding: 6px;
+            border-radius: 8px;
+            display: flex;
+            border: 1px solid var(--border-color);
+        }
+        .tab-trigger {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 1rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+        .tab-trigger.active {
+            background-color: var(--brand-accent);
+            color: #070f21;
+        }
+
+        .tab-pane {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .tab-pane.active { display: grid; }
+
+        .product-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--brand-accent);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        }
+        .card-badge {
+            align-self: flex-start;
+            background-color: rgba(203, 186, 148, 0.1);
+            color: var(--brand-accent);
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+        .card-rate {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+        .card-rate-sub {
+            font-size: 0.85rem;
+            color: var(--success);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+        .card-features {
+            list-style: none;
+            margin-bottom: 2.5rem;
+            flex-grow: 1;
+        }
+        .card-features li {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .card-features i { color: var(--brand-accent); font-size: 0.85rem; margin-top: 5px; }
+
+        /* Deep Compliance Footer */
+        footer {
+            background-color: #040914;
+            border-top: 1px solid var(--border-color);
+            padding: 5rem 0 3rem 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.5fr repeat(3, 1fr);
+            gap: 40px;
+            margin-bottom: 4rem;
+        }
+        .footer-brand h4 {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+        .footer-column h5 {
+            color: #ffffff;
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
+            font-weight: 600;
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li { margin-bottom: 0.75rem; }
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .footer-links a:hover { color: var(--brand-accent); }
+
+        .legal-disclosure-block {
+            border-top: 1px solid var(--border-color);
+            padding-top: 2.5rem;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        /* Clean Response Breakpoints without Sidebar Transitions */
+        @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+            .hero-content {
+                padding: 4rem 0;
+                align-items: center;
+                text-align: center;
+            }
+            .hero-desc {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .hero-actions {
+                justify-content: center;
+            }
+            .hero-image-pane {
+                height: 400px;
+                border-radius: 8px;
+                margin-bottom: 2rem;
+            }
+            .hero-image-pane::before {
+                background: linear-gradient(0deg, var(--bg-base) 0%, transparent 60%);
+            }
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .utility-bar {
+                display: none;
+            }
+            .main-nav {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .nav-links {
+                gap: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .tab-container {
+                flex-direction: column;
+                gap: 5px;
+                background: transparent;
+                border: none;
+            }
+            .tab-trigger {
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                background-color: var(--bg-surface);
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            .product-card {
+                padding: 1.5rem;
+            }
+            .container {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Double-Tier Navigation Header -->
+    <header>
+        <div class="utility-bar">
+            <div class="container utility-flex">
+                <a href="" class="utility-link"><i class="fa-solid fa-location-dot"></i> Institutional Branches</a>
+                <a href="" class="utility-link"><i class="fa-solid fa-shield-halved"></i> Security Protocol Matrix</a>
+                <a href="" class="utility-link"><i class="fa-solid fa-headset"></i> Private Support Desk</a>
+            </div>
+        </div>
+        <div class="container main-nav">
+            <a href="" class="logo">FIRST <span>NATIONAL</span></a>
+
+            <ul class="nav-links">
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main>
+        <!-- Asymmetric Hero Grid Module -->
+        <section class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <span class="hero-tagline">Institutional Asset Custody & Retail Banking</span>
+                    <h1 class="hero-title">Banking engineered for generation scale.</h1>
+                    <p class="hero-desc">Deploy capital symmetrically across comprehensive accounts integrated with private advisory parameters and global liquidity pathways.</p>
+                    <div class="hero-actions">
+                        <a href="{% url 'accounts:signUp' %}" class="btn btn-primary">Establish Account Setup</a>
+                        <a href="{% url 'accounts:login' %}" class="btn btn-outline">Review Liquidity Solutions</a>
+                    </div>
+                </div>
+                <div class="hero-image-pane"></div>
+            </div>
+        </section>
+
+        <!-- Trust System Strip -->
+        <section class="trust-strip">
+            <div class="container">
+                <div class="trust-flex">
+                    <div class="trust-item"><i class="fa-solid fa-building-shield"></i> <span>Member FDIC Protection Insured</span></div>
+                    <div class="trust-item"><i class="fa-solid fa-fingerprint"></i> <span>Multi-Factor Biometric Infrastructure</span></div>
+                    <div class="trust-item"><i class="fa-solid fa-network-wired"></i> <span>End-to-End Cryptographic Ledgers</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Product Rate System Layout -->
+        <section class="container products-section">
+            <div class="section-header">
+                <h2 class="section-title">Capital Acceleration Vehicles</h2>
+                <p class="section-subtitle">Select your banking parameter profile to view structured liquidity and investment yields.</p>
+            </div>
+
+            <!-- Switch Engine -->
+            <div class="tab-container">
+                <button class="tab-trigger active" onclick="switchTab(event, 'personal-rates')">Private & Retail Accounts</button>
+                <button class="tab-trigger" onclick="switchTab(event, 'commercial-rates')">Corporate & Commercial Treasury</button>
+            </div>
+
+            <!-- Personal Capital Panes -->
+            <div id="personal-rates" class="tab-pane active">
+                <div class="product-card">
+                    <span class="card-badge">Reserve Vaulting</span>
+                    <div class="card-rate">4.65%</div>
+                    <div class="card-rate-sub">Guaranteed Annual Percentage Yield</div>
+                    <ul class="card-features">
+                        <li><i class="fa-solid fa-circle-check"></i> Zero monthly infrastructure asset maintenance fees</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Symmetrical processing sweeps exceeding $5,000 baselines</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Real-time automated cross-border liquidity checks</li>
+                    </ul>
+                    <a href="{% url 'app:products' %}" class="btn btn-outline" style="width:100%">Initialize Savings Strategy</a>
+                </div>
+
+                <div class="product-card">
+                    <span class="card-badge">Liquid Transactions</span>
+                    <div class="card-rate">$0.00</div>
+                    <div class="card-rate-sub">Inbound Domestic Wire Transfer Fees</div>
+                    <ul class="card-features">
+                        <li><i class="fa-solid fa-circle-check"></i> Integrated premium multi-currency exchange matrix</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Adaptive 4-digit token authentication authorization</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Complementary unlimited global ATM network utility</li>
+                    </ul>
+                    <a href="{% url 'accounts:signUp' %}" class="btn btn-primary" style="width:100%">Open Checking Route</a>
+                </div>
+            </div>
+
+            <!-- Commercial Capital Panes -->
+            <div id="commercial-rates" class="tab-pane">
+                <div class="product-card">
+                    <span class="card-badge">Treasury Management</span>
+                    <div class="card-rate">5.12%</div>
+                    <div class="card-rate-sub">Corporate Arbitrage Liquidity Yield</div>
+                    <ul class="card-features">
+                        <li><i class="fa-solid fa-circle-check"></i> Automated high-volume capital clearing sweeps</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Dedicated enterprise institutional banking analyst</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Programmatic API transaction hooks</li>
+                    </ul>
+                    <a href="{% url 'app:products' %}" class="btn btn-outline" style="width:100%">Deploy Corporate Reserve</a>
+                </div>
+
+                <div class="product-card">
+                    <span class="card-badge">Enterprise Lending</span>
+                    <div class="card-rate">SOFR</div>
+                    <div class="card-rate-sub">+ Competitive Basis Points Adjustment</div>
+                    <ul class="card-features">
+                        <li><i class="fa-solid fa-circle-check"></i> Customized institutional credit lines up to $50M</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Fluid asset-backed operational capital structuring</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Symmetrical amortization modification strategies</li>
+                    </ul>
+                    <a href="{% url 'app:loans' %}" class="btn btn-primary" style="width:100%">Apply for Credit Facility</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Deep Compliance Footer Module -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h4>FIRST NATIONAL</h4>
+                    <p>Configuring secure institutional financial landscapes since inception frameworks.</p>
+                </div>
+<!--                <div class="footer-column">-->
+<!--                    <h5>Core Solutions</h5>-->
+<!--                    <ul class="footer-links">-->
+<!--                        <li><a href="">Asset Custody Matrix</a></li>-->
+<!--                        <li><a href="">High-Yield Optimization</a></li>-->
+<!--                        <li><a href="">Commercial Credit Facilities</a></li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--                <div class="footer-column">-->
+<!--                    <h5>Institutional Protocol</h5>-->
+<!--                    <ul class="footer-links">-->
+<!--                        <li><a href="">Regulatory Filings</a></li>-->
+<!--                        <li><a href="">Security Infrastructure</a></li>-->
+<!--                        <li><a href="">Corporate Governance</a></li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--                <div class="footer-column">-->
+<!--                    <h5>Contact Desk</h5>-->
+<!--                    <ul class="footer-links">-->
+<!--                        <li><a href="">Institutional Routing Details</a></li>-->
+<!--                        <li><a href="">Secure Encrypted Message Center</a></li>-->
+<!--                        <li><a href="">Emergency Asset Freeze Hotline</a></li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+            </div>
+
+            <!-- Real-World Legal Fine-Print Requirements -->
+            <div class="legal-disclosure-block">
+                <p style="margin-bottom: 1rem;"><strong>Investment, Security, and Insurance Instruments are: Not Covered by FDIC Insurance Parameters • Lack Direct Bank Guarantees • Subject to Volatility Mechanics and Potential Principle Impairment Risk Profiles.</strong></p>
+                <p style="margin-bottom: 1rem;">All deposit structures, asset clearing corridors, and liquidity management operations are processed through First National Bank, N.A. Member FDIC. Equal Housing Lender. All financial solutions, lines of credit, and programmatic yield allocations are contingent upon explicit identity verification parameters, historical underwriting review matrices, and algorithmic security clearance controls.</p>
+                <p style="margin-bottom: 1rem;">Annual Percentage Yields (APY) of 4.65% for retail accounts and 5.12% for corporate treasuries represent accurate performance baselines computed for current tracking cycles. Values are subject to immediate adjustment mechanisms guided by Federal Reserve rate modifications without structural notice protocols.</p>
+                <p>© 2026 First National Banking Corporation. All code frameworks, layout properties, and cryptographic security design parameters remain explicitly protected under active global rights registries.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Tab Script Elements -->
+    <script>
+        function switchTab(event, tabId) {
+            const panes = document.querySelectorAll('.tab-pane');
+            panes.forEach(pane => pane.classList.remove('active'));
+
+            const triggers = document.querySelectorAll('.tab-trigger');
+            triggers.forEach(trigger => trigger.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
