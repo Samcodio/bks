@@ -250,16 +250,17 @@
                         <div class="r-value">{{tr_receipt.counterpart_account.user.username}}</div>
                     </div>
                     {% else %}
-                    {% if tr_receipt.tr_receipt.transaction_type == "WITHDRAWAL" %}
-                    <div class="r-row">
-                        <div class="r-label">Sender</div>
-                        <div class="r-value">REVERSED</div>
-                    </div>
-                    {% else %}
-                    <div class="r-row">
-                        <div class="r-label">Sender</div>
-                        <div class="r-value">Card Deposit</div>
-                    </div>
+                        {% if tr_receipt.tr_receipt.transaction_type == "WITHDRAWAL" %}
+                        <div class="r-row">
+                            <div class="r-label">Sender</div>
+                            <div class="r-value">REVERSED</div>
+                        </div>
+                        {% else %}
+                        <div class="r-row">
+                            <div class="r-label">Sender</div>
+                            <div class="r-value">Card Deposit</div>
+                        </div>
+                        {% endif %}
                     {% endif %}
                     <div class="r-row">
                         <div class="r-label">Credited Account</div>
