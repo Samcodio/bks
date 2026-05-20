@@ -256,7 +256,7 @@
                     {% endif %}
                     <div class="r-row">
                         <div class="r-label">Credited Account</div>
-                        <div class="r-value mono">Savings {{tr_receipt.counterpart_account.account_genID|slice:"-4:" }}</div>
+                        <div class="r-value mono">Savings(...{{tr_receipt.account.account_genID|slice:"-4:" }})</div>
                     </div>
                     <div class="r-row">
                         <div class="r-label">Description</div>
