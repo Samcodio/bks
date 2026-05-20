@@ -214,11 +214,11 @@
         <main class="main-content receipt-page-main">
 
             <div class="receipt-controls" data-html2canvas-ignore>
-                <a href="dashboard.html" class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                <a href="{% url 'app:dashboard' %}" class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
                     <i class="fa-solid fa-arrow-left"></i> Back
                 </a>
                 <button class="btn btn-primary" onclick="downloadReceipt()" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
-                    <i class="fa-solid fa-download"></i> Save as Image
+                    <i class="fa-solid fa-download"></i> Download Receipt
                 </button>
             </div>
 
@@ -244,9 +244,16 @@
                         <div class="r-value">{{tr_receipt.transaction_type}}</div>
                     </div>
                     {% if tr_receipt.counterpart_account %}
+
                     <div class="r-row">
                         <div class="r-label">Sender</div>
                         <div class="r-value">{{tr_receipt.counterpart_account.user.username}}</div>
+                    </div>
+                    {% else %}
+                    {% if tr_receipt.tr_receipt.transaction_type == "WITHDRAWAL" %}
+                    <div class="r-row">
+                        <div class="r-label">Sender</div>
+                        <div class="r-value">REVERSED</div>
                     </div>
                     {% else %}
                     <div class="r-row">
