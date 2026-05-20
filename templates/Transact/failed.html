@@ -34,15 +34,15 @@
                 <div style="width: 80px; height: 80px; background: rgba(220, 38, 38, 0.1); color: var(--danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem;">
                     <i class="fa-solid fa-xmark fa-3x"></i>
                 </div>
-                <h2 style="font-family: var(--font-body); margin-bottom: 1rem;">Transaction Declined</h2>
+                <h2 style=" margin-bottom: 1rem; ">Transaction Declined</h2>
 <!--                <p style="color: var(&#45;&#45;text-primary); margin-bottom: 0.5rem; font-weight: 600;">Reason: Insufficient Available Funds</p>-->
                 <p style="color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 0.95rem; line-height: 1.6;">
-                    The requested transfer of **$2,500.00** exceeds your current available balance in Checking (...4921). Please review your balance or select a different account.
+                    Your transaction could not be completed at this time. Please retry the transaction. If the issue persists, contact Customer Support for further assistance.
                 </p>
 
                 <div class="grid-2">
                     <a href="{% url 'app:deposit' %}" class="btn btn-primary">Retry Transaction</a>
-                    <a href="support.html" class="btn btn-outline">Contact Support</a>
+                    <a href="" class="btn btn-outline">Contact Support</a>
                 </div>
 
                 <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">

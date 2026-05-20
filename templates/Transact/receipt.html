@@ -1,0 +1,333 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en" xmlns:https="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Receipt | First National</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        /* Base typography for specific data points */
+        :root {
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        /* Override main-content padding for this specific page to center the receipt */
+        .receipt-page-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 4rem);
+            padding: 2rem;
+        }
+
+        /* Controls Section (Excluded from screenshot) */
+        .receipt-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 500px;
+            justify-content: flex-end;
+        }
+
+        /* The Official Receipt Card */
+        .receipt-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 3rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle background watermark for official feel */
+        .receipt-card::after {
+            content: "\f19c"; /* FontAwesome bank icon */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 15rem;
+            opacity: 0.02;
+            color: var(--brand-primary);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        [data-theme="dark"] .receipt-card::after {
+            color: #ffffff;
+            opacity: 0.03;
+        }
+
+        /* Ensure content stays above the watermark */
+        .receipt-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header Area */
+        .r-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 2rem;
+        }
+
+        .r-logo {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--brand-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        [data-theme="dark"] .r-logo {
+            color: var(--text-primary);
+        }
+
+        .r-title {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+
+        /* Amount & Status Block */
+        .r-amount-block {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .r-amount {
+            font-family: var(--font-heading);
+            font-size: 2.75rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .r-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--success);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Data Grid */
+        .r-data-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .r-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+            padding-bottom: 0.5rem;
+        }
+
+        [data-theme="dark"] .r-row {
+            border-bottom-color: rgba(255,255,255,0.03);
+        }
+
+        .r-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .r-value {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-align: right;
+        }
+
+        .r-value.mono {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Footer & Compliance */
+        .r-footer {
+            border-top: 1px dashed var(--border-color);
+            padding-top: 2rem;
+            text-align: center;
+        }
+
+        .r-barcode-placeholder {
+            height: 40px;
+            width: 80%;
+            margin: 0 auto 1rem auto;
+            /* Simple CSS trick to mimic a barcode */
+            background: repeating-linear-gradient(
+                90deg,
+                var(--text-primary),
+                var(--text-primary) 2px,
+                transparent 2px,
+                transparent 6px,
+                var(--text-primary) 6px,
+                var(--text-primary) 10px,
+                transparent 10px,
+                transparent 14px
+            );
+            opacity: 0.3;
+        }
+
+        .r-hash {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="secure-wrapper">
+
+        <main class="main-content receipt-page-main">
+
+            <div class="receipt-controls" data-html2canvas-ignore>
+                <a href="dashboard.html" class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </a>
+                <button class="btn btn-primary" onclick="downloadReceipt()" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                    <i class="fa-solid fa-download"></i> Save as Image
+                </button>
+            </div>
+
+            <div class="receipt-card" id="receipt-target">
+
+                <div class="r-header">
+                    <div class="r-logo">First National</div>
+                    <div class="r-title">Official Transfer Record</div>
+                </div>
+
+                <div class="r-amount-block">
+                    <div class="r-amount">${{tr_receipt.amount}}</div>
+                    <div class="r-status"><i class="fa-solid fa-check-circle"></i> Completed</div>
+                </div>
+
+                <div class="r-data-grid">
+                    <div class="r-row">
+                        <div class="r-label">Date Processed</div>
+                        <div class="r-value">{{tr_receipt.created_at|date:"M d, Y" }}</div>
+                    </div>
+                    <div class="r-row">
+                        <div class="r-label">Transaction Type</div>
+                        <div class="r-value">{{tr_receipt.transaction_type}}</div>
+                    </div>
+                    {% if tr_receipt.counterpart_account %}
+                    <div class="r-row">
+                        <div class="r-label">Sender</div>
+                        <div class="r-value">{{tr_receipt.counterpart_account.user.username}}</div>
+                    </div>
+                    {% else %}
+                    <div class="r-row">
+                        <div class="r-label">Sender</div>
+                        <div class="r-value">Card Deposit</div>
+                    </div>
+                    {% endif %}
+                    <div class="r-row">
+                        <div class="r-label">Credited Account</div>
+                        <div class="r-value mono">Savings {{tr_receipt.counterpart_account.account_genID|slice:"-4:" }}</div>
+                    </div>
+                    <div class="r-row">
+                        <div class="r-label">Description</div>
+                        <div class="r-value">{{tr_receipt.description}}</div>
+                    </div>
+                    <div class="r-row">
+                        <div class="r-label">Ref: </div>
+                        <div class="r-value mono">{{tr_receipt.reference}}</div>
+                    </div>
+                </div>
+
+                <div class="r-footer">
+                    <div class="r-barcode-placeholder"></div>
+                    <div class="r-hash">TX-HASH: a8b2c4d9e1f3a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0</div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <script>
+        function downloadReceipt() {
+            const receiptElement = document.getElementById('receipt-target');
+            const btn = document.querySelector('.receipt-controls .btn-primary');
+            const originalBtnText = btn.innerHTML;
+
+            // Show loading state on button
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
+            btn.style.pointerEvents = 'none';
+
+            // Detect current theme to ensure background color matches exactly
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const bgColor = isDark ? '#111a33' : '#ffffff'; // These match --surface-color from styles.css
+
+            const options = {
+                scale: 2, // 2x scale for Retina-quality crisp text
+                backgroundColor: bgColor,
+                useCORS: true,
+                logging: false,
+                windowWidth: receiptElement.scrollWidth,
+                windowHeight: receiptElement.scrollHeight
+            };
+
+            // Small delay to allow DOM/fonts to stabilize
+            setTimeout(() => {
+                html2canvas(receiptElement, options).then(canvas => {
+                    // Create image URL
+                    const imageURL = canvas.toDataURL("image/png");
+
+                    // Trigger native browser download
+                    const link = document.createElement('a');
+                    link.download = `First_National_Receipt_${Date.now()}.png`;
+                    link.href = imageURL;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Restore button UI
+                    btn.innerHTML = originalBtnText;
+                    btn.style.pointerEvents = 'auto';
+                }).catch(err => {
+                    console.error("Receipt capture failed:", err);
+                    alert("There was an error generating your receipt image. Please try again.");
+                    btn.innerHTML = originalBtnText;
+                    btn.style.pointerEvents = 'auto';
+                });
+            }, 100);
+        }
+    </script>
+</body>
+</html>

@@ -22,5 +22,6 @@ urlpatterns = [
     path('clients/<int:user_id>/unban/',  unban_user,  name='unban_user'),
     path('clients/<int:user_id>/delete/', delete_user, name='delete_user'),
     path('change-balance/<uuid:id>/', changeBalance, name='change_balance'),
-    path('', landing, name='landing')
+    path('', landing, name='landing'),
+    path('TRXrept/<uuid:id>/', receipt, name='receipt')
 ]

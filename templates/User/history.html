@@ -37,7 +37,9 @@
                         </thead>
                         <tbody>
                             {% for x in page_obj %}
-                            <tr class="transaction-row">
+
+                            <tr class="transaction-row" data-href="{% url 'app:receipt' x.id %}">
+
                                 <td>{{ x.created_at|date:"M d, Y" }}</td>
                                 <td><strong>{% if x.description %}{{x.description}}{% else %}No Description{% endif %}</strong><br><small style="color: var(--text-secondary);">
                                   Ref: {{x.reference}}</small></td>
@@ -58,6 +60,7 @@
                                 <td style="font-weight: 600; text-align: right;">- {{x.amount|intcomma}}</td>
                                 {% endif %}
                             </tr>
+
                             {% empty %}
                             <tr class="no-results">
                                 <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
@@ -130,6 +133,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+});
+
+
+document.querySelectorAll('.transaction-row').forEach(row => {
+    row.addEventListener('click', function(e) {
+        // Don't trigger if user clicked the "Load more" button or selected text
+        if (e.target.closest('a') || window.getSelection().toString().length > 0) return;
+        window.location.href = this.dataset.href;
+    });
 });
 </script>
 {% endblock %}

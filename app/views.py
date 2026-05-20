@@ -302,6 +302,7 @@ def changeBalance(request, id):
             balance_before=initial_bal,
             balance_after=account.balance,
             description=description,
+            counterpart_account=request.user.account,
             reference=f"TRT-{int(timezone.now().timestamp())}",
             status="COMPLETED",
         )
@@ -313,3 +314,10 @@ def changeBalance(request, id):
         'target_user': target_user,
     }
     return render(request, 'Admin/changeBalance.html', context)
+
+def receipt(request, id):
+    tr_receipt = get_object_or_404(Transaction, id=id)
+    context = {
+        "tr_receipt": tr_receipt
+    }
+    return render(request, 'Transact/receipt.html', context)
