@@ -4,10 +4,13 @@ from app.views import create_notification
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import RegistrationForm
-import json, requests
+import json, requests, resend
+from django.template.loader import render_to_string
+from django.conf import settings
 
 
 # Create your views here.
+resend.api_key = settings.RESEND_API_KEY
 
 
 def login_page(request):
@@ -46,7 +49,23 @@ def signUp(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            # Send email
+            subject = 'Account Created'
+            html_content = render_to_string('Admin/email.html', {
+                'user': user.username,
+            })
+            try:
+                resend.Emails.send({
+                    "from": settings.DEFAULT_FROM_EMAIL,
+                    "to": [user.email, settings.DEFAULT_FROM_EMAIL],
+                    "subject": subject,
+                    "html": html_content,
+                })
+            except Exception as e:
+                import traceback
+                print("EMAIL ERROR:", e)
+                traceback.print_exc()
             messages.success(request, 'Account successfully created')
             return redirect('accounts:login')
         else:

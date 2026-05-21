@@ -165,3 +165,15 @@ STATICFILES_DIRS = (
 FLW_PUBLIC_KEY = os.getenv("FLW_PUBLIC_KEY")
 FLW_SECRET_KEY = os.getenv("FLW_SECRET_KEY")
 FLW_ENCRYPTION_KEY = os.getenv("FLW_ENCRYPTION_KEY")
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.resend.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'resend'
+EMAIL_HOST_PASSWORD = 're_TVoA7egy_BMm2zaJheg5uYeXvDbb7LhC6'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'support@firstnatiionalbank.com'
+
+RESEND_API_KEY = 're_TVoA7egy_BMm2zaJheg5uYeXvDbb7LhC6'

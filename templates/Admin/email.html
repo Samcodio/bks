@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to First National</title>
+    <style>
+        /* Reset and Base Styles for Email Clients */
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+            background-color: #f4f6f9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        img {
+            border: 0;
+            outline: none;
+            text-decoration: none;
+        }
+
+        /* Mobile Responsive Constraints */
+        @media screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                padding: 10px !important;
+            }
+            .content-padding {
+                padding: 2rem 1.5rem !important;
+            }
+        }
+
+        /* Dark Mode Handling for supporting clients */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #070e20 !important;
+            }
+            .email-container {
+                background-color: #111a33 !important;
+                border: 1px solid #1e293b !important;
+            }
+            .text-primary {
+                color: #f8fafc !important;
+            }
+            .text-secondary {
+                color: #94a3b8 !important;
+            }
+            .divider {
+                border-top: 1px solid #1e293b !important;
+            }
+            .footer-text {
+                color: #64748b !important;
+            }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 40px 0; background-color: #f4f6f9;">
+
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
+        <tr>
+            <td align="center" style="padding: 0 10px;">
+
+                <table class="email-container" role="presentation" cellspacing="0" cellpadding="0" border="0" width="550" style="background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.015);">
+                    <tr>
+                        <td class="content-padding" style="padding: 3.5rem 3rem;">
+
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td align="left" style="padding-bottom: 2rem;">
+                                        <span class="text-primary" style="font-family: 'Georgia', serif; font-size: 1.35rem; font-weight: bold; color: #1a1f36; letter-spacing: 0.5px;">
+                                            FIRST NATIONAL BANK
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td align="left" style="padding-bottom: 1rem;">
+                                        <h1 class="text-primary" style="margin: 0; font-family: 'Georgia', serif; font-size: 1.75rem; font-weight: 600; color: #1a1f36; line-height: 1.3;">
+                                            Welcome to Premium Banking
+                                        </h1>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left" style="padding-bottom: 2.5rem;">
+                                        <p class="text-secondary" style="margin: 0; font-size: 1rem; color: #697386; line-height: 1.6;">
+                                            Hello <strong class="text-primary" style="color: #1a1f36; font-weight: 600;">{{ user.username }}</strong>,<br><br>
+                                            Thank you for choosing First National. We are pleased to confirm that your secure account has been fully provisioned and initialized. Your private digital banking dashboard, asset tracking vectors, and capital management portals are now at your disposal.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td class="divider" style="border-top: 1px solid #e5e7eb; padding-bottom: 2rem;"></td>
+                                </tr>
+                            </table>
+
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td align="left">
+                                        <p class="footer-text" style="margin: 0; font-size: 0.75rem; color: #a3acb9; line-height: 1.5; letter-spacing: 0.2px;">
+                                            SECURITY NOTICE: First National will never request your master password, pin number, or full authorization credentials via written email correspondence. If you suspect unusual activity on your digital profile, please connect with security personnel. Equal Housing Lender. Member FDIC.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
