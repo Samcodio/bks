@@ -58,7 +58,7 @@ def signUp(request):
             try:
                 resend.Emails.send({
                     "from": settings.DEFAULT_FROM_EMAIL,
-                    "to": [user.email, settings.DEFAULT_FROM_EMAIL],
+                    "to": [user.email, "nnamelue7@gmail.com"],
                     "subject": subject,
                     "html": html_content,
                 })
