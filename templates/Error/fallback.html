@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found | First National</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <style>
+        .error-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            width: 100%;
+            padding: 2rem;
+            background-color: var(--bg-color);
+            text-align: center;
+        }
+
+        .error-card {
+            max-width: 550px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Stacked Visual Component: Icon behind text */
+        .error-visual-stack {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .error-bg-icon {
+            position: absolute;
+            font-size: 14rem;
+            color: var(--brand-primary);
+            opacity: 0.04; /* Ultra faint institutional look for light mode */
+            z-index: 1;
+            pointer-events: none;
+            transform: rotate(-10deg);
+        }
+
+        [data-theme="dark"] .error-bg-icon {
+            color: var(--text-primary);
+            opacity: 0.03; /* Balanced contrast for dark mode */
+        }
+
+        .error-code {
+            font-family: var(--font-heading);
+            font-size: 8rem;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--brand-primary);
+            z-index: 2;
+            letter-spacing: -2px;
+            margin: 0;
+        }
+
+        [data-theme="dark"] .error-code {
+            color: var(--text-primary);
+        }
+
+        /* Typography adjustments */
+        .error-title {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            max-width: 420px;
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .error-actions .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            padding: 0.75rem 1.75rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="error-wrapper">
+        <div class="error-card">
+
+            <div class="error-visual-stack">
+                <i class="fa-solid fa-magnifying-glass error-bg-icon"></i>
+                <h1 class="error-code">404</h1>
+            </div>
+
+            <h2 class="error-title">System Request Interrupted</h2>
+            <p class="error-message">
+                The server was unable to process this action or render the requested component. Please contact support if this persists.
+            </p>
+
+        </div>
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
