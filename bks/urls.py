@@ -25,7 +25,7 @@ handler400 = errors.error_400_view
 
 urlpatterns = [
     path('accounts/', include('accounts.urls', namespace='accounts')),
-    path('admin/', admin.site.urls),
+    path('localstradmin/', admin.site.urls),
     path('', include('app.urls', namespace='app')),
     path('auth/', include('django.contrib.auth.urls')),
     path('payments/', include('payments.urls', namespace='payments')),
