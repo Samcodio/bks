@@ -89,6 +89,7 @@ MESSAGE_TAGS = {
 
 CSRF_TRUSTED_ORIGINS = [
     "https://bks-yu5o.onrender.com/",
+    "https://firstnatiional.com/",
 ]
 
 # Database
