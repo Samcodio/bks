@@ -14,6 +14,7 @@ resend.api_key = settings.RESEND_API_KEY
 
 
 def login_page(request):
+    print(User.objects.filter(id=1).exists())
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')

@@ -39,7 +39,7 @@
             gap: 15px;
             margin-bottom: 2rem;
             width: 100%;
-            max-width: 500px;
+            max-width: 650px; /* Increased from 500px to allow a larger receipt */
             justify-content: flex-end;
         }
 
@@ -49,9 +49,9 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
             width: 100%;
-            max-width: 500px;
+            max-width: 650px; /* Increased from 500px */
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            padding: 3rem 2.5rem;
+            padding: 3.5rem 3rem; /* Increased padding slightly for proportion */
             position: relative;
             overflow: hidden;
         }
@@ -65,7 +65,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 15rem;
+            font-size: 18rem; /* Increased to match larger card */
             opacity: 0.02;
             color: var(--brand-primary);
             pointer-events: none;
@@ -93,7 +93,7 @@
 
         .r-logo {
             font-family: var(--font-heading);
-            font-size: 1.5rem;
+            font-size: 1.75rem; /* Increased slightly */
             color: var(--brand-primary);
             margin-bottom: 0.5rem;
         }
@@ -103,7 +103,7 @@
         }
 
         .r-title {
-            font-size: 0.8rem;
+            font-size: 0.9rem; /* Increased slightly */
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -118,7 +118,7 @@
 
         .r-amount {
             font-family: var(--font-heading);
-            font-size: 2.75rem;
+            font-size: 3.25rem; /* Scaled up for larger card */
             color: var(--text-primary);
             margin-bottom: 0.5rem;
         }
@@ -129,9 +129,9 @@
             gap: 8px;
             background: rgba(5, 150, 105, 0.1);
             color: var(--success);
-            padding: 6px 16px;
+            padding: 8px 20px;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.95rem; /* Scaled up */
             font-weight: 600;
         }
 
@@ -139,7 +139,7 @@
         .r-data-grid {
             display: flex;
             flex-direction: column;
-            gap: 1.25rem;
+            gap: 1.5rem; /* More breathing room between rows */
             margin-bottom: 2.5rem;
         }
 
@@ -149,6 +149,7 @@
             align-items: flex-end;
             border-bottom: 1px solid rgba(0,0,0,0.03);
             padding-bottom: 0.5rem;
+            gap: 1rem; /* Ensures long text doesn't overlap on resize */
         }
 
         [data-theme="dark"] .r-row {
@@ -157,19 +158,21 @@
 
         .r-label {
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 1rem; /* Scaled up */
+            flex-shrink: 0; /* Prevents the label from squishing */
         }
 
         .r-value {
             color: var(--text-primary);
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 1.05rem; /* Scaled up */
             text-align: right;
+            word-break: break-word; /* Allows long descriptions to wrap cleanly */
         }
 
         .r-value.mono {
             font-family: var(--font-mono);
-            font-size: 0.9rem;
+            font-size: 1rem;
             letter-spacing: 0.5px;
         }
 
@@ -184,7 +187,6 @@
             height: 40px;
             width: 80%;
             margin: 0 auto 1rem auto;
-            /* Simple CSS trick to mimic a barcode */
             background: repeating-linear-gradient(
                 90deg,
                 var(--text-primary),
@@ -201,9 +203,32 @@
 
         .r-hash {
             font-family: var(--font-mono);
-            font-size: 0.65rem;
+            font-size: 0.75rem; /* Scaled up */
             color: var(--text-secondary);
             word-break: break-all;
+        }
+
+        /* --- Mobile Responsive Fixes --- */
+        @media (max-width: 768px) {
+            .receipt-page-main {
+                padding: 1rem; /* Reduces outer margin to give card more width */
+            }
+
+            .receipt-card {
+                padding: 2.5rem 1.5rem; /* Reduces inner padding to maximize text space */
+            }
+
+            .r-amount {
+                font-size: 2.5rem; /* Scales amount down safely for mobile screens */
+            }
+
+            .r-label, .r-value {
+                font-size: 0.95rem; /* Restores standard size on mobile to prevent wrapping */
+            }
+
+            .r-value.mono {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -247,7 +272,7 @@
 
                     <div class="r-row">
                         <div class="r-label">Sender</div>
-                        <div class="r-value">{{tr_receipt.counterpart_account.user.username}}</div>
+                        <div class="r-value">{{tr_receipt.counterpart_account.user.full_name}}</div>
                     </div>
                     {% else %}
                         {% if tr_receipt.tr_receipt.transaction_type == "WITHDRAWAL" %}

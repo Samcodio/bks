@@ -90,7 +90,9 @@ s0.parentNode.insertBefore(s1,s0);
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2>First National</h2>
+                <a href="{% url 'app:dashboard' %}" class="logo-wrapper">
+                    <img src="{% static 'images/rm.png' %}" alt="First National Logo" class="brand-logo">
+                </a>
             </div>
             <nav class="sidebar-nav">
                 <a href="{% url 'app:dashboard' %}"><i class="fa-solid fa-wallet"></i> Dashboard</a>

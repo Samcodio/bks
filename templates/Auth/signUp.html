@@ -106,10 +106,9 @@
 
     <div class="card signup-card">
         <div style="text-align: center; margin-bottom: 2.5rem;">
-            <div class="security-badge">
-                <i class="fa-solid fa-shield-check"></i> 256-Bit Encrypted
-            </div>
-            <h2 style="font-family: var(--font-body); font-size: 2.2rem; color: var(--brand-primary);">First National</h2>
+            <a href="{% url 'app:landing' %}" class="logo-wrapper">
+                <img src="{% static 'images/rm.png' %}" alt="First National Logo" class="brand-logo">
+            </a>
             <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 5px;">Private Banking Enrollment</p>
         </div>
 
@@ -136,6 +135,10 @@
         <form action="" method="post">
             {% csrf_token %}
             <p class="form-section-title">Identity Verification</p>
+            <div class="form-group">
+                    <label>Full Name</label>
+                    {{form.full_name}}
+                </div>
             <div class="grid-2">
                 <div class="form-group">
                     <label>First Name</label>

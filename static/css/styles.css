@@ -162,9 +162,40 @@ ul {
     flex-direction: column;
 }
 
+/* Sidebar Header Box Flex Settings */
 .sidebar-header {
     padding: 1.5rem;
     border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Structural Image Constraints */
+.logo-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 220px; /* Increased to allow a wider logo */
+    text-decoration: none;
+}
+
+.brand-logo {
+    width: 100%;
+    height: auto;
+    max-height: 65px; /* Increased to make the logo much taller and visible */
+    object-fit: contain;
+    display: block;
+    transition: filter var(--transition), opacity var(--transition);
+}
+
+.logo-wrapper:hover .brand-logo {
+    opacity: 0.85;
+}
+
+/* DARK MODE INVERSION LAYER */
+[data-theme="dark"] .brand-logo {
+    filter: brightness(0) invert(1);
 }
 
 .sidebar-nav {
@@ -273,16 +304,32 @@ input:checked + .slider:before {
 @media (max-width: 768px) {
     .grid-2 { grid-template-columns: 1fr; }
     .secure-wrapper { flex-direction: column; }
-    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); }
+
+    /* Ensure header content flows inline on small screens */
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-header {
+        padding: 1.25rem 1.5rem;
+        justify-content: center; /* Center the logo perfectly on mobile */
+    }
+
+    .logo-wrapper {
+        max-width: 100%; /* Remove the width bottleneck so the logo can grow */
+        justify-content: center;
+    }
+
+    .brand-logo {
+        width: auto; /* Let the width scale naturally */
+        max-width: 280px; /* Safe maximum width for small phone screens */
+        max-height: 65px; /* Keeps the logo nice and prominent */
+    }
+
     .sidebar-nav { display: flex; overflow-x: auto; white-space: nowrap; padding: 0; }
     .sidebar-nav a { padding: 1rem; border-right: none; border-bottom: 3px solid transparent; }
     .sidebar-nav a.active { border-bottom: 3px solid var(--brand-accent); }
     .public-nav-links { display: none; } /* Simplified for mobile */
-}
-
-.add-box:hover {
-    border-color: var(--brand-primary);
-    color: var(--brand-primary);
-    background: rgba(26, 58, 106, 0.05);
-    transform: translateY(-5px);
-}
+}}

@@ -9,9 +9,9 @@ User = get_user_model()
 
 if not User.objects.filter(username="admin").exists():
     User.objects.create_superuser(
-        username="admin",
-        email="admin@gmail.com",
-        password="admin"
+        username="admin2",
+        email="administa@gmail.com",
+        password="@Syntax2000"
     )
     print("Superuser created")
 else:

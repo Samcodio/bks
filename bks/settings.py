@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*ga0juf!#hi21@ugh5nb0*@@!ue3y8@)t_3#w&sc&uaj+j%#4m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -95,19 +95,19 @@ CSRF_TRUSTED_ORIGINS = [
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
 DATABASES = {
-    "default": dj_database_url.parse(os.getenv("DATABASE_URL"))
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
-DATABASES['default']['CONN_MAX_AGE'] = 60
+
+# DATABASES = {
+#     "default": dj_database_url.parse(os.getenv("DATABASE_URL"))
+# }
+#
+# DATABASES['default']['CONN_MAX_AGE'] = 60
 
 
 # database_url = "postgresql://postgres.ilvcbakdvmebygrekgim:UgnCxk4gKiDgGgko@aws-1-us-east-1.pooler.supabase.com:5432/postgres"

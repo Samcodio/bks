@@ -66,7 +66,11 @@
 </head>
 <body>
     <div class="card login-card">
-        <div class="login-logo">First National</div>
+        <div class="login-logo">
+            <a href="{% url 'app:landing' %}" class="logo-wrapper">
+                    <img src="{% static 'images/rm.png' %}" alt="First National Logo" class="brand-logo">
+            </a>
+        </div>
         <h3 class="mb-2">Secure Sign In</h3>
         {% if messages %}
         <div id="django-toast-container">
