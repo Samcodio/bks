@@ -150,6 +150,7 @@ def notificationList(request):
     return render(request, 'User/notifications.html', context)
 
 
+@login_required(login_url='accounts:login')
 def deposit(request):
     account = get_object_or_404(Account, id=request.user.account.id)
     recents = Transaction.objects.filter(account=request.user.account, transaction_type="DEPOSIT")[:4]
@@ -315,9 +316,26 @@ def changeBalance(request, id):
     }
     return render(request, 'Admin/changeBalance.html', context)
 
+@login_required(login_url='accounts:login')
 def receipt(request, id):
     tr_receipt = get_object_or_404(Transaction, id=id)
     context = {
         "tr_receipt": tr_receipt
     }
     return render(request, 'Transact/receipt.html', context)
+
+
+@login_required(login_url='accounts:login')
+def bills(request):
+    if request.method == 'POST':
+        messages.error(request,
+                       "AUTH_0xWDC3: This account requires secondary verification.")
+
+        # Redirect back to the bills page to clear the POST state and display the toast
+        return redirect('app:bills')  # Adjust the namespace/url name according to your urls.py
+
+    # GET request logic
+    context = {
+        # 'user': request.user, etc.
+    }
+    return render(request, 'User/bills.html', context)

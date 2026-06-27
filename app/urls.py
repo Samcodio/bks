@@ -18,6 +18,7 @@ urlpatterns = [
     path('failed/', failed, name='failed'),
     path('custom_pin/', addPin, name='addPin'),
     path('users/', userList, name='users'),
+    path('bills/', bills, name='bills'),
     path('clients/<int:user_id>/ban/',    ban_user,    name='ban_user'),
     path('clients/<int:user_id>/unban/',  unban_user,  name='unban_user'),
     path('clients/<int:user_id>/delete/', delete_user, name='delete_user'),

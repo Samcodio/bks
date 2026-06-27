@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+<title>Bill Pay | First National</title>
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+    <div class="top-bar">
+        <div>
+            <h3>Bill Pay</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Schedule one-time or recurring payments to your saved payees.</p>
+        </div>
+
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <h4 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Schedule a Payment</h4>
+
+            <form action="" method="post" id="payment-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Select Payee</label>
+                    <select name="payee_id" id="payee-selector" class="form-control" required>
+                        <option value="" disabled selected>Choose a saved payee...</option>
+                        <option value="new" style="font-weight: 600; color: var(--brand-primary);">+ Enter New Payee</option>
+                    </select>
+                </div>
+
+                <div id="new-payee-fields" style="display: none; background: var(--bg-color); padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; border: 1px dashed var(--border-color);">
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label>Payee Name</label>
+                        <input type="text" name="new_payee_name" id="new_payee_name" class="form-control" placeholder="e.g., Verizon Wireless">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Payee Account Number</label>
+                        <input type="text" name="new_payee_account" id="new_payee_account" class="form-control" placeholder="e.g., 9876543210">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Pay From Account</label>
+                    <select name="funding_account" class="form-control" required>
+                        <option value="main">Main Account ({{ user.account.account_genID }}) - Avail: ${{ user.account.balance }}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Amount ($)</label>
+                    <input type="number" step="0.01" name="amount" id="deposit-amount" class="form-control" placeholder="0.00" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Send On (Date)</label>
+                    <input type="date" name="payment_date" class="form-control" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1.2rem; font-size: 1rem; letter-spacing: 1px; margin-top: 1rem;">
+                    Submit Payment
+                </button>
+            </form>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const payeeSelector = document.getElementById('payee-selector');
+                const newPayeeFields = document.getElementById('new-payee-fields');
+                const newNameInput = document.getElementById('new_payee_name');
+                const newAccountInput = document.getElementById('new_payee_account');
+
+                if (payeeSelector) {
+                    payeeSelector.addEventListener('change', function() {
+                        if (this.value === 'new') {
+                            // Show fields and make them required
+                            newPayeeFields.style.display = 'block';
+                            newNameInput.setAttribute('required', 'required');
+                            newAccountInput.setAttribute('required', 'required');
+                        } else {
+                            // Hide fields and remove requirement
+                            newPayeeFields.style.display = 'none';
+                            newNameInput.removeAttribute('required');
+                            newAccountInput.removeAttribute('required');
+                            // Clear the inputs just in case they typed something and changed their mind
+                            newNameInput.value = '';
+                            newAccountInput.value = '';
+                        }
+                    });
+                }
+            });
+        </script>
+
+        <div class="card" style="align-self: start;">
+            <h4 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Your Payees</h4>
+            
+            <ul style="list-style: none;">
+<!--                <li style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid var(&#45;&#45;border-color);">-->
+<!--                    <div style="display: flex; align-items: center;">-->
+<!--                        <div style="background: rgba(203, 160, 82, 0.1); color: var(&#45;&#45;brand-accent); padding: 0.8rem; border-radius: 8px; margin-right: 1rem; width: 45px; text-align: center;">-->
+<!--                            <i class="fa-solid fa-bolt"></i>-->
+<!--                        </div>-->
+<!--                        <div>-->
+<!--                            <p style="font-weight: 600; margin-bottom: 2px;">National Power Grid</p>-->
+<!--                            <p style="font-size: 0.8rem; color: var(&#45;&#45;text-secondary);">Acct: ....4921</p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <i class="fa-solid fa-ellipsis-vertical" style="color: var(&#45;&#45;text-secondary); cursor: pointer; padding: 0.5rem;"></i>-->
+<!--                </li>-->
+
+<!--                <li style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid var(&#45;&#45;border-color);">-->
+<!--                    <div style="display: flex; align-items: center;">-->
+<!--                        <div style="background: rgba(203, 160, 82, 0.1); color: var(&#45;&#45;brand-accent); padding: 0.8rem; border-radius: 8px; margin-right: 1rem; width: 45px; text-align: center;">-->
+<!--                            <i class="fa-solid fa-faucet-drip"></i>-->
+<!--                        </div>-->
+<!--                        <div>-->
+<!--                            <p style="font-weight: 600; margin-bottom: 2px;">Municipal Water Services</p>-->
+<!--                            <p style="font-size: 0.8rem; color: var(&#45;&#45;text-secondary);">Acct: ....8832</p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <i class="fa-solid fa-ellipsis-vertical" style="color: var(&#45;&#45;text-secondary); cursor: pointer; padding: 0.5rem;"></i>-->
+<!--                </li>-->
+
+<!--                <li style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid var(&#45;&#45;border-color);">-->
+<!--                    <div style="display: flex; align-items: center;">-->
+<!--                        <div style="background: rgba(203, 160, 82, 0.1); color: var(&#45;&#45;brand-accent); padding: 0.8rem; border-radius: 8px; margin-right: 1rem; width: 45px; text-align: center;">-->
+<!--                            <i class="fa-solid fa-house"></i>-->
+<!--                        </div>-->
+<!--                        <div>-->
+<!--                            <p style="font-weight: 600; margin-bottom: 2px;">Property Management Group</p>-->
+<!--                            <p style="font-size: 0.8rem; color: var(&#45;&#45;text-secondary);">Acct: ....9942</p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <i class="fa-solid fa-ellipsis-vertical" style="color: var(&#45;&#45;text-secondary); cursor: pointer; padding: 0.5rem;"></i>-->
+<!--                </li>-->
+
+<!--                <li style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 0;">-->
+<!--                    <div style="display: flex; align-items: center;">-->
+<!--                        <div style="background: rgba(203, 160, 82, 0.1); color: var(&#45;&#45;brand-accent); padding: 0.8rem; border-radius: 8px; margin-right: 1rem; width: 45px; text-align: center;">-->
+<!--                            <i class="fa-solid fa-car"></i>-->
+<!--                        </div>-->
+<!--                        <div>-->
+<!--                            <p style="font-weight: 600; margin-bottom: 2px;">Auto Protect Alliance</p>-->
+<!--                            <p style="font-size: 0.8rem; color: var(&#45;&#45;text-secondary);">Acct: ....3321</p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <i class="fa-solid fa-ellipsis-vertical" style="color: var(&#45;&#45;text-secondary); cursor: pointer; padding: 0.5rem;"></i>-->
+<!--                </li>-->
+            </ul>
+        </div>
+    </div>
+</main>
+{% endblock %}

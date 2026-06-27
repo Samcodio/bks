@@ -55,11 +55,13 @@ def signUp(request):
             subject = 'Account Created'
             html_content = render_to_string('Admin/email.html', {
                 'user': user.username,
+                'user_account_num': user.account.account_genID,
+                'name': user.full_name
             })
             try:
                 resend.Emails.send({
                     "from": settings.DEFAULT_FROM_EMAIL,
-                    "to": [user.email, "nnamelue7@gmail.com"],
+                    "to": user.email,
                     "subject": subject,
                     "html": html_content,
                 })

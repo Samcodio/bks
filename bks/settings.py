@@ -111,6 +111,8 @@ DATABASES = {
 DATABASES['default']['CONN_MAX_AGE'] = 60
 
 
+
+
 # database_url = "postgresql://postgres.ilvcbakdvmebygrekgim:UgnCxk4gKiDgGgko@aws-1-us-east-1.pooler.supabase.com:5432/postgres"
 #
 # DATABASES = {
@@ -176,6 +178,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'resend'
 EMAIL_HOST_PASSWORD = 're_TVoA7egy_BMm2zaJheg5uYeXvDbb7LhC6'
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'support@firstnatiionalbank.com'
+DEFAULT_FROM_EMAIL = 'support@firstnatiional.com'
 
-RESEND_API_KEY = 're_TVoA7egy_BMm2zaJheg5uYeXvDbb7LhC6'
+RESEND_API_KEY = 're_HKBkEy3f_8uv1htbxnL7duLxjEWaHDavr'

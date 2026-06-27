@@ -20,11 +20,12 @@
             <div class="grid-2">
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
-                        <h4 style="font-family: var(--font-body); color: var(--text-secondary);">Account ID ({{user.account.account_genID}})</h4>
+                        <h4 style="font-family: var(--font-body); color: var(--text-secondary);">{{user.full_name}}</h4>
                         <i class="fa-solid fa-ellipsis-vertical" style="color: var(--text-secondary); cursor: pointer;"></i>
                     </div>
                     <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem; font-family: var(--font-body);">${{user.account.balance|intcomma}}</h2>
                     <p style="color: var(--success); font-weight: 500; font-size: 0.9rem;">Available Balance</p>
+                    <h5 style="font-family: var(--font-body); color: var(--text-secondary);">{{user.account.account_genID}}</h5>
                     <div class="mt-2" style="display: flex; gap: 10px;">
                         <a href="{% url 'app:transfer' %}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Transfer</a>
                         <a href="{% url 'app:deposit' %}" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Make Deposit</a>

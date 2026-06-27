@@ -53,7 +53,7 @@ class Account(models.Model):
         max_attempts = 100
         for _ in range(max_attempts):
             random_digits = f"{random.randint(0, 9999999):07d}"
-            gen_id = f"00{random_digits}"
+            gen_id = f"015{random_digits}"
 
             if not Account.objects.filter(account_genID=gen_id).exists():
                 return gen_id
