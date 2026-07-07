@@ -88,8 +88,8 @@ MESSAGE_TAGS = {
 }
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://firstnatiional.com",
-    "https://www.firstnatiional.com",
+    "https://firstnatiional.ltd",
+    "https://www.firstnational.ltd",
     "https://site--fnbks--hv7nfq4pfl5c.code.run",
 ]
 
