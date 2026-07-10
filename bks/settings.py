@@ -105,7 +105,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 
 DATABASES = {
-    "default": dj_database_url.parse(os.getenv("DATABASE_URL"))
+    "default": dj_database_url.parse("postgres://avnadmin:AVNS_1DGkskenR2Pj7gYtT4W@pg-2bdd4d7b-cybrongaming247-64dc.b.aivencloud.com:14803/defaultdb?sslmode=require")
 }
 
 DATABASES['default']['CONN_MAX_AGE'] = 60
