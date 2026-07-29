@@ -180,7 +180,7 @@ EMAIL_HOST_PASSWORD = 're_TVoA7egy_BMm2zaJheg5uYeXvDbb7LhC6'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'support@firstnatiional.com'
 
-RESEND_API_KEY = 're_WanTSHHk_HfYkpJFG84bBjCLga9U5qS3t'
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 
 
 # default storage cloundinary
