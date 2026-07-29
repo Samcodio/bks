@@ -29,7 +29,7 @@ TIER_SCORES = {
 def dashboard(request):
     user = request.user
 
-    score = TIER_SCORES.get(user.account.tier, 0)
+    score = TIER_SCORES.get(user.account.tier)
     transactions = Transaction.objects.filter(account=request.user.account).order_by('-created_at')[:2]
     time = timezone.now()
     context = {
