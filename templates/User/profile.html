@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+<title>Profile Settings | First National</title>
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Gold Tier Badge reused from dashboard */
+    .tier-badge-gold {
+        display: inline-block;
+        padding: 0.25rem 0.8rem;
+        font-family: inherit;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        color: #5a3d00;
+        background: linear-gradient(135deg, #fff6d5 0%, #f0c14b 25%, #d4a017 50%, #f7dc8a 75%, #b8860b 100%);
+        background-size: 200% 200%;
+        border-radius: 20px;
+        border: 1px solid #d4a017;
+        box-shadow: 0 1px 3px rgba(180, 140, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.5);
+        text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+        animation: gold-shimmer 4s ease infinite;
+    }
+    @keyframes gold-shimmer {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* Form Styles */
+    .form-group { margin-bottom: 1.5rem; }
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background-color: var(--surface-color);
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 0.95rem;
+        transition: border-color 0.2s;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: var(--brand-primary, #2563eb);
+    }
+    .form-control:disabled, .form-control[readonly] {
+        background-color: rgba(0,0,0,0.03);
+        color: var(--text-secondary);
+        cursor: not-allowed;
+        border-color: rgba(0,0,0,0.05);
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 0.5rem;
+    }
+</style>
+
+<main class="main-content">
+    <div class="top-bar">
+        <div>
+            <div class="profile-header">
+                <h3>My Profile</h3>
+                <span class="tier-badge-gold">{{ user.account.tier }}</span>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Manage your personal and account details.</p>
+        </div>
+    </div>
+
+    <!-- Read-Only User Information -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+            <h4 style="font-family: var(--font-body); color: var(--text-primary);">Basic Information</h4>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">This information is tied to your identity and cannot be changed here.</p>
+        </div>
+
+        <div class="grid-2" style="gap: 1.5rem;">
+            <div class="form-group" style="margin: 0;">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" value="{{ user.full_name|default:'' }}" readonly>
+            </div>
+            <div class="form-group" style="margin: 0;">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-control" value="{{ user.email }}" readonly>
+            </div>
+            <div class="form-group" style="margin: 0;">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" value="{{ user.phone_number|default:'Not provided' }}" pattern="[0-9+\-\s()]*" readonly>
+            </div>
+        </div>
+    </div>
+
+    <!-- Editable Account Information -->
+    <div class="card">
+        <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+            <h4 style="font-family: var(--font-body); color: var(--text-primary);">Account Details</h4>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">Update your residential and next of kin information.</p>
+        </div>
+
+        <form method="POST" action="{% url 'app:profile' %}">
+            {% csrf_token %}
+            
+            <div class="grid-2" style="gap: 1.5rem;">
+                <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="dob">Date of Birth</label>
+                    <!-- Formatting ensures the date loads correctly in the HTML date picker -->
+                    <input type="date" id="dob" name="dob" class="form-control" value="{{ user.account.dob|date:'Y-m-d' }}">
+                </div>
+                
+                <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="address">Residential Address</label>
+                    <input type="text" id="address" name="address" class="form-control" value="{{ user.account.address|default:'' }}" placeholder="123 Main St, City, Country">
+                </div>
+            </div>
+
+            <h5 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--text-secondary);">Next of Kin</h5>
+            
+            <div class="grid-2" style="gap: 1.5rem;">
+                <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="nok_name">Full Name</label>
+                    <input type="text" id="nok_name" name="nok_name" class="form-control" value="{{ user.account.nok_name|default:'' }}" placeholder="Relative's Full Name">
+                </div>
+                
+                <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="nok_contact">Contact Information</label>
+                    <input type="tel" id="nok_contact" name="nok_contact" class="form-control numeric-only" inputmode="numeric" pattern="[0-9+\-\s()]*" value="{{ user.account.nok_contact|default:'' }}" placeholder="Phone number or email">
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem; cursor: pointer;">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock %}

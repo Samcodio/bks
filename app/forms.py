@@ -21,3 +21,9 @@ class ChangePasswordForm(SetPasswordForm):
                 "autocomplete": "off"
             }
         )
+
+
+class AccountProfileForm(ModelForm):
+    class Meta:
+        model = Account
+        fields = ['dob', 'address', 'nok_name', 'nok_contact']

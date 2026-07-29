@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identity Verification Notice - First National</title>
+    <style>
+        /* Reset and Base Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+            background-color: #050505; /* Deep black background */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            color: #e2e8f0;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        img {
+            border: 0;
+            outline: none;
+            text-decoration: none;
+        }
+
+        /* Typography & Colors */
+        .text-white { color: #ffffff !important; }
+        .text-muted { color: #8b9bb4 !important; }
+        .text-accent { color: #60a5fa !important; }
+        .text-success { color: #34d399 !important; }
+
+        /* Mobile Constraints */
+        @media screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                padding: 15px !important;
+                border-radius: 0 !important;
+                border: none !important;
+            }
+            .content-padding {
+                padding: 2rem 1.5rem !important;
+            }
+            .details-table td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .details-label {
+                padding-bottom: 4px !important;
+            }
+            .details-value {
+                padding-bottom: 16px !important;
+            }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 40px 0; background-color: #050505;">
+
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
+        <tr>
+            <td align="center" style="padding: 0 10px;">
+
+                <!-- Main Container -->
+                <table class="email-container" role="presentation" cellspacing="0" cellpadding="0" border="0" width="550" style="background-color: #0a1122; border: 1px solid #1a2642; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);">
+                    <tr>
+                        <td class="content-padding" style="padding: 3.5rem 3rem;">
+
+                            <!-- Header -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td align="center" style="padding-bottom: 2.5rem; border-bottom: 1px solid #1a2642;">
+                                        <span class="text-white" style="font-family: 'Georgia', serif; font-size: 1.25rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;">
+                                            First National
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Verification Message -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 2.5rem;">
+                                <tr>
+                                    <td align="left" style="padding-bottom: 1rem;">
+                                        <h1 class="text-white" style="margin: 0; font-family: 'Georgia', serif; font-size: 1.5rem; font-weight: 500; line-height: 1.3;">
+                                            Identity Verification Complete
+                                        </h1>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left" style="padding-bottom: 2.5rem;">
+                                        <p class="text-muted" style="margin: 0; font-size: 0.95rem; line-height: 1.6;">
+                                            Dear <strong class="text-white" style="font-weight: 600;">{{ name }}</strong>,<br><br>
+                                            This is an automated notification to confirm that the proof of identity documentation you recently submitted has been processed. Our compliance team has successfully verified your documents, and your account records have been securely updated to reflect this status.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Status Details Card -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0f172a; border-radius: 6px; border: 1px solid #1e293b;">
+                                <tr>
+                                    <td style="padding: 2rem;">
+
+                                        <table class="details-table" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <!-- Verification Status -->
+                                            <tr>
+                                                <td class="details-label" width="40%" style="padding-bottom: 12px; font-size: 0.85rem; color: #8b9bb4; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                    Document Status
+                                                </td>
+                                                <td class="details-value text-success" width="60%" style="padding-bottom: 12px; font-size: 0.95rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                                                    Verified
+                                                </td>
+                                            </tr>
+                                            <!-- Account Name -->
+                                            <tr>
+                                                <td class="details-label" style="padding-bottom: 12px; font-size: 0.85rem; color: #8b9bb4; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                    Account Holder
+                                                </td>
+                                                <td class="details-value text-white" style="padding-bottom: 12px; font-size: 0.95rem; font-weight: 600;">
+                                                    {{ name }}
+                                                </td>
+                                            </tr>
+                                            <!-- Divider -->
+                                            <tr>
+                                                <td colspan="2" style="padding-bottom: 12px;">
+                                                    <div style="border-top: 1px dashed #1e293b; width: 100%;"></div>
+                                                </td>
+                                            </tr>
+                                            <!-- Action Required -->
+                                            <tr>
+                                                <td class="details-label" style="padding-top: 4px; font-size: 0.85rem; color: #8b9bb4; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                    Action Required
+                                                </td>
+                                                <td class="details-value text-muted" style="padding-top: 4px; font-size: 0.95rem; font-weight: 500;">
+                                                    None
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Footer Space -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 2.5rem;">
+                                <tr>
+                                    <td style="border-top: 1px solid #1a2642; padding-top: 2rem;">
+                                        <p style="margin: 0; font-size: 0.75rem; color: #475569; line-height: 1.6; letter-spacing: 0.2px; text-align: justify;">
+                                            SECURITY NOTICE: First National will never request your master password, pin number, or full authorization credentials via written email correspondence. If you suspect unusual activity on your digital profile, please connect with security personnel immediately. Equal Housing Lender. Member FDIC.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

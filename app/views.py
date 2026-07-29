@@ -3,10 +3,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from .models import *
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .forms import ChangePasswordForm
+from .forms import ChangePasswordForm, AccountProfileForm
 from django.contrib import messages
 from django.conf import settings
 from decimal import Decimal
+import json, requests, resend
+from django.template.loader import render_to_string
 
 # Create your views here.
 
@@ -16,17 +18,101 @@ def landing(request):
     return render(request, 'User/index.html', context)
 
 
+
+TIER_SCORES = {
+    Account.TierType.TierOne: 38,
+    Account.TierType.TierTwo: 65,
+    Account.TierType.TierThree: 100,
+}
+
 @login_required(login_url='accounts:login')
 def dashboard(request):
     user = request.user
+
+    score = TIER_SCORES.get(user.account.tier, 0)
     transactions = Transaction.objects.filter(account=request.user.account).order_by('-created_at')[:2]
     time = timezone.now()
     context = {
         'user': user,
         'transactions': transactions,
-        'time': time
+        'time': time,
+        'score': score
     }
     return render(request, 'User/dashboard.html', context)
+
+
+@login_required
+def upgrade_tier(request):
+    # If the user is already Tier 2, you might want to redirect them
+    # if request.user.account.tier == 2:
+    #     messages.info(request, "Your account is already upgraded to Tier 2.")
+    #     return redirect('app:dashboard')
+
+    if request.method == 'POST':
+        address = request.POST.get('address')
+        dob = request.POST.get('dob')
+        nok_name = request.POST.get('nok_name')
+        nok_contact = request.POST.get('nok_contact')
+        proof_of_address = request.FILES.get('proof_of_address')
+
+        # Assuming you have an Account or Profile model linked to the User
+        account = request.user.account
+
+        account.address = address
+        account.dob = dob
+        account.nok_name = nok_name
+        account.nok_contact = nok_contact
+
+        if proof_of_address:
+            account.utility_bill = proof_of_address
+
+        # You can either automatically upgrade them, or set a pending status for admin review
+        account.tier = Account.TierType.TierTwo
+        account.save()
+        # Send email
+        subject = 'Account Created'
+        html_content = render_to_string('Admin/identityemail.html', {
+            'name': request.user.account.full_name
+        })
+        try:
+            resend.Emails.send({
+                "from": settings.DEFAULT_FROM_EMAIL,
+                "to": request.user.email,
+                "subject": subject,
+                "html": html_content,
+            })
+        except Exception as e:
+            import traceback
+            print("EMAIL ERROR:", e)
+            traceback.print_exc()
+
+        messages.success(request, 'Tier 2 upgrade submitted successfully. Your account is being reviewed.')
+        return redirect('app:dashboard')
+
+    return render(request, 'User/upgrade_tier.html')
+
+
+@login_required
+def profile(request):
+    account = getattr(request.user, 'account', None)
+
+    # If the user somehow has no account, handle it immediately
+    if not account:
+        messages.error(request, 'Account profile not found.')
+        return redirect('app:dashboard')  # Redirect to safety
+
+    if request.method == 'POST':
+        # Pass the POST data and the existing account instance to the form
+        form = AccountProfileForm(request.POST, instance=account)
+
+        if form.is_valid():
+            form.save()  # This automatically saves the cleaned data to the account
+            messages.success(request, 'Your account information has been updated successfully.')
+            return redirect('app:profile')
+        else:
+            # If the user inputs an invalid date or exceeds max_length, it catches it here
+            messages.error(request, 'There was an error updating your profile. Please check your inputs.')
+    return render(request, 'User/profile.html')
 
 
 @login_required(login_url='accounts:login')

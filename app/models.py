@@ -4,6 +4,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from cloudinary.models import CloudinaryField
+from cloudinary import CloudinaryImage
 
 
 
@@ -28,11 +30,22 @@ class Account(models.Model):
         CHECKING = "CHECKING", "Checking"
         WALLET   = "WALLET",   "Wallet"
 
+    class TierType(models.TextChoices):
+        TierOne  = "Tier 1",  "Tier 1"
+        TierTwo = "Tier 2", "Tier 2"
+        TierThree   = "Tier 3",   "Tier 3"
+
     id             = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user           = models.OneToOneField(User, on_delete=models.PROTECT, related_name="account")
     account_genID  = models.CharField(max_length=20, unique=True, db_index=True)
     account_type   = models.CharField(max_length=20, choices=AccountType.choices, default=AccountType.SAVINGS)
+    tier           = models.CharField(max_length=20, choices=TierType.choices, default=TierType.TierOne)
     balance        = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+    dob            = models.DateField(null=True, blank=True)
+    nok_name       = models.CharField(max_length=100, null=True, blank=True)
+    nok_contact    = models.CharField(max_length=100, null=True, blank=True)
+    address        = models.CharField(max_length=100, null=True, blank=True)
+    utility_bill   = CloudinaryField('raw', null=True, blank=True)
     is_active      = models.BooleanField(default=True)
     created_at     = models.DateTimeField(auto_now_add=True)
     updated_at     = models.DateTimeField(auto_now=True)

@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
-import os, dj_database_url
+import os, cloudinary, dj_database_url
 from pathlib import Path
 from django.contrib.messages import constants as message_constants
 from dotenv import load_dotenv
@@ -181,3 +181,22 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'support@firstnatiional.com'
 
 RESEND_API_KEY = 're_HKBkEy3f_8uv1htbxnL7duLxjEWaHDavr'
+
+
+# default storage cloundinary
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dtgepccth',
+    'API_KEY': '221356624192632',
+    'API_SECRET': 'D6zHHlGm_zoXClwU8Xa-Dzua5bE',
+    'auto_create_folders': True,
+    'auto_optimize': True,  # Enable automatic image optimization
+    'auto_responsive': True,  # Enable automatic image resizing
+}
+
+
+cloudinary.config(
+    cloud_name='dtgepccth',
+    api_key='363466449134293',
+    api_secret='biHImhWRz0fsh_sOgrlJqS1I5mg',
+)
+

@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+<title>Upgrade to Tier 2 | First National</title>
+{% endblock %}
+
+{% block content %}
+<style>
+    .form-group { margin-bottom: 1.5rem; }
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background-color: var(--surface-color);
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 0.95rem;
+        transition: border-color 0.2s;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: var(--brand-primary, #2563eb);
+    }
+    .form-control:disabled, .form-control[readonly] {
+        background-color: rgba(0,0,0,0.03);
+        color: var(--text-secondary);
+        cursor: not-allowed;
+    }
+    .file-upload-wrapper {
+        border: 2px dashed var(--border-color);
+        padding: 2rem;
+        text-align: center;
+        border-radius: 6px;
+        background: rgba(0,0,0,0.01);
+    }
+    .tier-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background-color: #f3f4f6;
+        color: #4b5563;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<main class="main-content">
+    <div class="top-bar">
+        <div>
+            <h3>KYC</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Unlock higher transaction limits and premium features.</p>
+        </div>
+    </div>
+
+    <div class="card" style="max-width: 800px; margin: 0 auto;">
+        <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+            <span class="tier-badge">KYC level: Tier 1</span>
+            <h4 style="font-family: var(--font-body); font-size: 1.5rem;">Upgrade to Tier 2</h4>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">
+                Please verify your personal information and provide proof of address to upgrade your account.
+            </p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <h5 style="margin-bottom: 1rem; color: var(--text-secondary);">Personal Details (Read Only)</h5>
+            <div class="grid-2" style="gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="form-group" style="margin: 0;">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-control" value="{{ user.first_name }}" readonly>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-control" value="{{ user.last_name }}" readonly>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-control" value="{{ user.get_full_name|default:user.full_name }}" readonly>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-control" value="{{ user.email }}" readonly>
+                </div>
+            </div>
+
+            <h5 style="margin-bottom: 1rem; color: var(--text-secondary);">Required Information</h5>
+            
+            <div class="grid-2" style="gap: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label" for="dob">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="address">Full Residential Address</label>
+                    <input type="text" id="address" name="address" class="form-control" placeholder="123 Main St, City, State, Zip" required>
+                </div>
+            </div>
+
+            <div class="grid-2" style="gap: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label" for="nok_name">Next of Kin (Full Name)</label>
+                    <input type="text" id="nok_name" name="nok_name" class="form-control" placeholder="Jane Doe" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="nok_contact">Next of Kin Contact</label>
+                    <input type="tel" id="nok_contact" name="nok_contact" class="form-control numeric-only" inputmode="numeric" placeholder="+1 (555) 000-0000" required>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 1rem;">
+                <label class="form-label">Proof of Address Document</label>
+                <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">Upload a recent utility bill or bank statement (Max 5MB. PDF, JPG, PNG).</p>
+                <div class="file-upload-wrapper">
+                    <i class="fa-solid fa-cloud-arrow-up fa-2x" style="color: var(--text-secondary); margin-bottom: 10px;"></i><br>
+                    <input type="file" id="proof_of_address" name="proof_of_address" accept=".pdf,.jpg,.jpeg,.png" required style="max-width: 100%;">
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; text-align: right;">
+                <a href="{% url 'app:dashboard' %}" class="btn btn-outline" style="padding: 0.75rem 1.5rem; margin-right: 10px;">Cancel</a>
+                <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">Submit Upgrade Request</button>
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock %}

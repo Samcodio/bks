@@ -24,5 +24,7 @@ urlpatterns = [
     path('clients/<int:user_id>/delete/', delete_user, name='delete_user'),
     path('change-balance/<uuid:id>/', changeBalance, name='change_balance'),
     path('', landing, name='landing'),
-    path('TRXrept/<uuid:id>/', receipt, name='receipt')
+    path('TRXrept/<uuid:id>/', receipt, name='receipt'),
+    path('kyc/', upgrade_tier, name='upgrade_tier'),
+    path('account-data/', profile, name='profile'),
 ]

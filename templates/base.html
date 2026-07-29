@@ -132,7 +132,30 @@ s0.parentNode.insertBefore(s1,s0);
     {% block content %}
       {% endblock %}
     </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+                          'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+                          'Home', 'End'];
 
+    document.querySelectorAll('.numeric-only').forEach(function (input) {
+        input.addEventListener('keydown', function (e) {
+            if (allowedKeys.includes(e.key)) return;
+            if ((e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x'].includes(e.key.toLowerCase())) return;
+            if (!/^[0-9+\-\s()]$/.test(e.key)) {
+                e.preventDefault();
+            }
+        });
+
+        input.addEventListener('paste', function (e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const cleaned = pastedText.replace(/[^0-9+\-\s()]/g, '');
+            document.execCommand('insertText', false, cleaned);
+        });
+    });
+});
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const toasts = document.querySelectorAll('.django-toast');

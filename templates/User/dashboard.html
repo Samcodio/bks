@@ -5,58 +5,174 @@
 <title>Dashboard | First National</title>
 {% endblock %}
 {% block content %}
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="top-bar">
-                <div>
-                    <h3>Hello {{user.username}}.</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Last sign in: {{time|date:"F j, Y - h:i A" }}</p>
-                </div>
-                <div>
-                    <a href="{% url 'app:settings' %}" style="color: var(--text-secondary); margin-left: 15px;"><i class="fa-solid fa-user-circle fa-2x"></i></a>
+<style>
+.tier-badge-gold {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: #5a3d00;
+    background: linear-gradient(135deg, #fff6d5 0%, #f0c14b 25%, #d4a017 50%, #f7dc8a 75%, #b8860b 100%);
+    background-size: 200% 200%;
+    border-radius: 20px;
+    border: 1px solid #d4a017;
+    box-shadow: 0 1px 3px rgba(180, 140, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.5);
+    text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+    animation: gold-shimmer 4s ease infinite;
+}
+
+@keyframes gold-shimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Security Score Circular Indicator */
+.security-score-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-top: 0.5rem;
+}
+
+.score-circle {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: 6px solid;
+    font-family: var(--font-body);
+    flex-shrink: 0;
+}
+
+/* Dynamic Circle Colors */
+.score-red { border-color: #dc2626; color: #dc2626; }
+.score-yellow { border-color: #f59e0b; color: #d97706; }
+.score-green { border-color: #10b981; color: #059669; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .security-score-wrapper {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+}
+</style>
+<!-- Main Content -->
+<main class="main-content">
+    <div class="top-bar">
+        <div>
+            <h3>Hello {{user.username}}.</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Last sign in: {{time|date:"F j, Y - h:i A" }}</p>
+        </div>
+        <div>
+            {% if score < 40 %}
+            <a href="{% url 'app:upgrade_tier' %}" style="color: var(--text-secondary); margin-left: 15px;"><i class="fa-solid fa-user-circle fa-2x"></i></a>
+            {% else %}
+            <a href="{% url 'app:profile' %}" style="color: var(--text-secondary); margin-left: 15px;"><i class="fa-solid fa-user-circle fa-2x"></i></a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <!-- Balance Card -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+                <h4 style="font-family: var(--font-body); color: var(--text-secondary);">{{user.full_name}}
+                </h4>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span class="tier-badge-gold">
+                        {% if score < 40 %}Tier 1
+                    {% elif score == 100 %}Tier 3
+                    {% else %}Tier 2{% endif %}</span>
+                    <i class="fa-solid fa-ellipsis-vertical" style="color: var(--text-secondary); cursor: pointer;"></i>
                 </div>
             </div>
 
-            <div class="grid-2">
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
-                        <h4 style="font-family: var(--font-body); color: var(--text-secondary);">{{user.full_name}}</h4>
-                        <i class="fa-solid fa-ellipsis-vertical" style="color: var(--text-secondary); cursor: pointer;"></i>
-                    </div>
-                    <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem; font-family: var(--font-body);">${{user.account.balance|intcomma}}</h2>
-                    <p style="color: var(--success); font-weight: 500; font-size: 0.9rem;">Available Balance</p>
-                    <h5 style="font-family: var(--font-body); color: var(--text-secondary);">{{user.account.account_genID}}</h5>
-                    <div class="mt-2" style="display: flex; gap: 10px;">
-                        <a href="{% url 'app:transfer' %}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Transfer</a>
-                        <a href="{% url 'app:deposit' %}" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Make Deposit</a>
-                    </div>
-                </div>
+            <!-- Balance Toggle -->
+            <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem; font-family: var(--font-body); display: flex; align-items: center; gap: 12px;">
+                <span id="account-balance" data-balance="${{user.account.balance|intcomma}}">${{user.account.balance|intcomma}}</span>
+                <i class="fa-solid fa-eye-slash" id="toggle-balance" style="font-size: 1.25rem; color: var(--text-secondary); cursor: pointer;" title="Toggle Balance Visibility"></i>
+            </h2>
 
+            <p style="color: var(--success); font-weight: 500; font-size: 0.9rem;">Available Balance</p>
+            <h5 style="font-family: var(--font-body); color: var(--text-secondary); margin-top: 0.5rem;">{{user.account.account_genID}}</h5>
+            <div class="mt-2" style="display: flex; gap: 10px;">
+                <a href="{% url 'app:transfer' %}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Transfer</a>
+                <a href="{% url 'app:deposit' %}" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Make Deposit</a>
+            </div>
+        </div>
+
+        <!-- New Security Score Card -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+                <h4 style="font-family: var(--font-body); color: var(--text-secondary);">Account Security</h4>
+                <i class="fa-solid fa-shield-halved" style="color: var(--text-secondary); font-size: 1.2rem;"></i>
             </div>
 
-            <h3 class="mt-2 mb-1">Recent Transactions</h3>
-            <div class="card" style="padding: 0;">
-                <ul style="list-style: none;">
-                    {% for x in transactions %}
-                    <li style="padding: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <p style="font-weight: 500;">{{x.description}}</p>
-                            <p style="font-size: 0.85rem; color: var(--text-secondary);">{{ x.created_at|date:"M d, Y" }}</p>
-                        </div>
-                        {% if x.transaction_type == 'DEPOSIT' %}
-                        <p style="font-weight: 600;">+${{x.amount|intcomma}}</p>
-                        {% elif x.transaction_type == 'WITHDRAWAL' %}
-                        <p style="font-weight: 600;">-${{x.amount|intcomma}}</p>
+            <div class="security-score-wrapper">
+                <div class="score-circle
+                    {% if score < 40 %}score-red
+                    {% elif score == 100 %}score-green
+                    {% else %}score-yellow{% endif %}">
+                    {{ score }}
+                </div>
+
+                <div class="security-score-details">
+                    <h3 style="margin-bottom: 0.25rem;">Security Score</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.4;">
+                        {% if score < 40 %}
+                            Action required. Your account is currently at high risk.
+                        {% elif score == 100 %}
+                            Excellent! Your account is fully secured.
+                        {% else %}
+                            Good, but there's room to improve your account safety.
                         {% endif %}
-                    </li>
-                    {% empty %}
-                    <li class="no-results">
-                        <p colspan="5" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-                            No transactions found.
-                        </p>
-                    </li>
-                    {% endfor %}
-                </ul>
+                    </p>
+                    {% if score < 40 %}
+                    <a href="{% url 'app:upgrade_tier' %}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; margin-top: 12px; display: inline-block;">Account Information</a>
+                    {% endif %}
+                </div>
             </div>
-        </main>
+        </div>
+    </div>
+
+    <h3 class="mt-2 mb-1">Recent Transactions</h3>
+    <div class="card" style="padding: 0;">
+        <ul style="list-style: none;">
+            {% for x in transactions %}
+            <li style="padding: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="font-weight: 500;">{{x.description}}</p>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">{{ x.created_at|date:"M d, Y" }}</p>
+                </div>
+                {% if x.transaction_type == 'DEPOSIT' %}
+                <p style="font-weight: 600; color: var(--success);">+${{x.amount|intcomma}}</p>
+                {% elif x.transaction_type == 'WITHDRAWAL' %}
+                <p style="font-weight: 600; color: var(--danger);">-${{x.amount|intcomma}}</p>
+                {% endif %}
+            </li>
+            {% empty %}
+            <li class="no-results">
+                <p colspan="5" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                    No transactions found.
+                </p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</main>
 {% endblock %}
