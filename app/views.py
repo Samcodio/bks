@@ -72,7 +72,7 @@ def upgrade_tier(request):
         # Send email
         subject = 'Account Created'
         html_content = render_to_string('Admin/identityemail.html', {
-            'name': request.user.account.full_name
+            'name': request.user.full_name
         })
         try:
             resend.Emails.send({

@@ -28,3 +28,31 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 });
 
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Balance Toggle Logic
+    const balanceEl = document.getElementById('account-balance');
+    const toggleIcon = document.getElementById('toggle-balance');
+
+    if (balanceEl && toggleIcon) {
+        // Save the real balance string
+        const actualBalance = balanceEl.getAttribute('data-balance');
+        const hiddenBalance = '****';
+        let isHidden = false;
+
+        toggleIcon.addEventListener('click', () => {
+            isHidden = !isHidden;
+            if (isHidden) {
+                balanceEl.textContent = hiddenBalance;
+                // Swap the FontAwesome icon to closed eye
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            } else {
+                balanceEl.textContent = actualBalance;
+                // Swap back to open eye
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            }
+        });
+    }
+});
