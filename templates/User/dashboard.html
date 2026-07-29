@@ -97,7 +97,7 @@
                     <span class="tier-badge-gold">
                         {% if score < 40 %}Tier 1
                     {% elif score == 100 %}Tier 3
-                    {% else %}Tier 2{% endif %}</span>
+                    {% elif score >= 40 %}Tier 2{% endif %}</span>
                     <i class="fa-solid fa-ellipsis-vertical" style="color: var(--text-secondary); cursor: pointer;"></i>
                 </div>
             </div>
@@ -127,7 +127,7 @@
                 <div class="score-circle
                     {% if score < 40 %}score-red
                     {% elif score == 100 %}score-green
-                    {% else %}score-yellow{% endif %}">
+                    {% elif score >= 40 %}score-yellow{% endif %}">
                     {{ score }}
                 </div>
 
