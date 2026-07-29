@@ -33,9 +33,16 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('full_name', 'username', 'first_name', 'last_name', 'email', 'social_sec')
+        fields = ('full_name', 'username', 'first_name', 'last_name', 'email', 'social_sec', 'country')
         widgets = {
-
+            'country': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                    'autofocus': 'true',
+                    'type': 'text',
+                    'required': 'true',
+                }
+            ),
             'full_name': forms.TextInput(
                 attrs={
                     'class': 'form-control',

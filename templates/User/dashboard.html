@@ -104,7 +104,7 @@
 
             <!-- Balance Toggle -->
             <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem; font-family: var(--font-body); display: flex; align-items: center; gap: 12px;">
-                <span id="account-balance" data-balance="${{user.account.balance|intcomma}}">${{user.account.balance|intcomma}}</span>
+                <span id="account-balance" data-balance="{% if request.user.country %}{{request.user.country.currency_symbol}}{% else %}${% endif %}{{user.account.balance|intcomma}}">{% if request.user.country %}{{request.user.country.currency_symbol}}{% else %}${% endif %}{{user.account.balance|intcomma}}</span>
                 <i class="fa-solid fa-eye-slash" id="toggle-balance" style="font-size: 1.25rem; color: var(--text-secondary); cursor: pointer;" title="Toggle Balance Visibility"></i>
             </h2>
 
@@ -160,9 +160,9 @@
                     <p style="font-size: 0.85rem; color: var(--text-secondary);">{{ x.created_at|date:"M d, Y" }}</p>
                 </div>
                 {% if x.transaction_type == 'DEPOSIT' %}
-                <p style="font-weight: 600; color: var(--success);">+${{x.amount|intcomma}}</p>
+                <p style="font-weight: 600; color: var(--success);">+{% if request.user.country %}{{request.user.country.currency_symbol}}{% else %}${% endif %}{{x.amount|intcomma}}</p>
                 {% elif x.transaction_type == 'WITHDRAWAL' %}
-                <p style="font-weight: 600; color: var(--danger);">-${{x.amount|intcomma}}</p>
+                <p style="font-weight: 600; color: var(--danger);">-{% if request.user.country %}{{request.user.country.currency_symbol}}{% else %}${% endif %}{{x.amount|intcomma}}</p>
                 {% endif %}
             </li>
             {% empty %}

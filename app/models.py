@@ -7,6 +7,17 @@ from django.dispatch import receiver
 from cloudinary.models import CloudinaryField
 from cloudinary import CloudinaryImage
 
+class Country(models.Model):
+    id              = models.AutoField(primary_key=True)  # auto-incrementing ID
+    name            = models.CharField(max_length=100, unique=True)
+    currency_symbol = models.CharField(max_length=10)
+
+    class Meta:
+        db_table = "countries"
+        ordering = ["name"]
+
+    def __str__(self):
+        return f"{self.name} ({self.currency_symbol})"
 
 
 class User(AbstractUser):
@@ -15,6 +26,12 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=20, blank=True)
     is_verified   = models.BooleanField(default=False)
     social_sec = models.CharField(max_length=20)
+    country = models.ForeignKey(
+        Country,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name="users"
+    )
 
     class Meta:
         db_table = "users"

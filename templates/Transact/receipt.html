@@ -255,7 +255,7 @@
                 </div>
 
                 <div class="r-amount-block">
-                    <div class="r-amount">${{tr_receipt.amount}}</div>
+                    <div class="r-amount">{% if request.user.country %}{{request.user.country.currency_symbol}}{% else %}${% endif %}{{tr_receipt.amount}}</div>
                     <div class="r-status"><i class="fa-solid fa-check-circle"></i> Completed</div>
                 </div>
 

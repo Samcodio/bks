@@ -19,7 +19,7 @@
                             <input class="form-control" readonly value='Savings (...{{account.account_genID|slice:"-4:"}})'>
                         </div>
                         <div class="form-group">
-                            <label>Amount ($)</label>
+                            <label>Amount ({% if request.user.country %}{{request.user.country.currency_symbol}}{% else %}${% endif %})</label>
                             <input type="number" class="form-control"
                                id="deposit-amount"
                                placeholder="0.00"

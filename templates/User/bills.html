@@ -43,12 +43,12 @@
                 <div class="form-group">
                     <label>Pay From Account</label>
                     <select name="funding_account" class="form-control" required>
-                        <option value="main">Main Account ({{ user.account.account_genID }}) - Avail: ${{ user.account.balance }}</option>
+                        <option value="main">Main Account ({{ user.account.account_genID }}) - Avail: {% if request.user.country %}{{request.user.country.currency_symbol}}{% else %}${% endif %}{{ user.account.balance }}</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Amount ($)</label>
+                    <label>Amount ({% if request.user.country %}{{request.user.country.currency_symbol}}{% else %}${% endif %})</label>
                     <input type="number" step="0.01" name="amount" id="deposit-amount" class="form-control" placeholder="0.00" required>
                 </div>
 
