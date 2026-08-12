@@ -425,3 +425,71 @@ def bills(request):
         # 'user': request.user, etc.
     }
     return render(request, 'User/bills.html', context)
+
+
+
+LUXAND_LIVENESS_URL = "https://api.luxand.cloud/photo/liveness"
+
+def check_liveness(image_file):
+    """
+    image_file: Django UploadedFile (in-memory), e.g. request.FILES['selfie']
+    Returns dict: {"score": float, "result": "real"|"spoof", "rectangle": {...}} or None on failure
+    """
+    headers = {"token": settings.LUXAND_API_TOKEN}
+    files = {"photo": (image_file.name, image_file.read(), image_file.content_type)}
+
+    response = requests.post(LUXAND_LIVENESS_URL, headers=headers, files=files)
+
+    if response.status_code == 200:
+        return response.json()
+
+    # Log this properly rather than print() in production
+    return None
+
+# In your views.py (or wherever check_liveness already lives)
+
+LIVENESS_SCORE_THRESHOLD = 0.9  # Luxand's docs example shows 0.999999 for a genuine live face
+
+def check_liveness(image_file):
+    """
+    image_file: Django UploadedFile, e.g. request.FILES['selfie']
+    Returns dict from Luxand or None on failure
+    """
+    headers = {"token": settings.LUXAND_API_TOKEN}
+    files = {"photo": (image_file.name, image_file.read(), image_file.content_type)}
+
+    response = requests.post(LUXAND_LIVENESS_URL, headers=headers, files=files)
+
+    if response.status_code == 200:
+        return response.json()
+    return None
+
+
+@login_required(login_url='accounts:login')
+def liveness_check(request):
+    account = request.user.account
+    if request.method == 'POST':
+        selfie = request.FILES.get('selfie')
+        if not selfie:
+            messages.error(request, 'No image submitted.')
+            return redirect('app:liveness_check')
+
+        result = check_liveness(selfie)
+
+        if result is None:
+            messages.error(request, 'Could not process image. Please try again.')
+            return redirect('app:liveness_check')
+
+        is_live = result.get('result') == 'real' and result.get('score', 0) >= LIVENESS_SCORE_THRESHOLD
+
+        if is_live:
+            messages.success(request, f"Face verification successful")
+            account.tier = Account.TierType.TierThree
+            account.save()
+            return redirect('app:dashboard')
+        else:
+            messages.error(request, f"Face verification failed. Ensure photo isn't blurred. (score: {result.get('score'):.4f})")
+
+        return redirect('app:liveness_check')
+
+    return render(request, 'User/liveness_check.html')

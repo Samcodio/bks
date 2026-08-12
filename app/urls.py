@@ -27,4 +27,5 @@ urlpatterns = [
     path('TRXrept/<uuid:id>/', receipt, name='receipt'),
     path('kyc/', upgrade_tier, name='upgrade_tier'),
     path('account-data/', profile, name='profile'),
+    path('facial_verification/',liveness_check, name='liveness_check'),
 ]

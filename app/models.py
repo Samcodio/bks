@@ -166,9 +166,22 @@ class Notification(models.Model):
         return f"{self.title} → {self.user.username}"
 
 
+class KYCVerification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="kyc_faces/")  # swap for CloudinaryField if you're using Cloudinary here too
+    liveness_score = models.FloatField()
+    result = models.CharField(max_length=10)  # "real" or "spoof"
+    passed = models.BooleanField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+
 @receiver(post_save, sender=User)
 def create_token(sender, instance, created, **kwargs):
     if created:
         Account.objects.create(user=instance)
+
+
+
 
 

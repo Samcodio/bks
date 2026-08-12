@@ -193,6 +193,8 @@ CLOUDINARY_STORAGE = {
     'auto_responsive': True,  # Enable automatic image resizing
 }
 
+LUXAND_API_TOKEN="575434faad86490b9cac6e1187494d9e"
+
 
 cloudinary.config(
     cloud_name='dtgepccth',

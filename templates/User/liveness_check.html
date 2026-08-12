@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+<title>Facial Verification | First National</title>
+{% endblock %}
+{% block content %}
+<style>
+.liveness-card {
+    max-width: 440px;
+    margin: 0 auto;
+}
+
+.camera-frame {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    margin: 1.5rem auto;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #000;
+    border: 6px solid var(--border-color);
+    transition: border-color 0.3s ease;
+}
+
+.camera-frame.scanning {
+    border-color: #f59e0b;
+    animation: pulse-ring 1.6s ease-in-out infinite;
+}
+
+.camera-frame.success {
+    border-color: #10b981;
+}
+
+.camera-frame.failure {
+    border-color: #dc2626;
+}
+
+@keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+    70% { box-shadow: 0 0 0 14px rgba(245, 158, 11, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
+.camera-frame video,
+.camera-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.camera-frame video {
+    transform: scaleX(-1); /* mirror, feels natural for a selfie */
+}
+
+.result-overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.45);
+    font-size: 3rem;
+    color: #fff;
+}
+
+.result-overlay.show { display: flex; }
+
+.liveness-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 0.5rem;
+}
+
+.liveness-status {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    min-height: 1.2rem;
+    margin-top: 0.75rem;
+}
+
+.liveness-alert {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.liveness-alert.alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.liveness-alert.alert-danger {
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+}
+</style>
+
+<main class="main-content">
+    <div class="top-bar">
+        <div>
+            <h3>Facial Verification</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Confirm it's really you to raise your security score.</p>
+        </div>
+    </div>
+
+    <div class="card liveness-card">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="liveness-alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div style="text-align: center;">
+            <h4 style="font-family: var(--font-body); color: var(--text-secondary); margin-bottom: 0.25rem;">Live Scan</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Center your face in the circle and hold still.</p>
+        </div>
+
+        <div class="camera-frame" id="camera-frame">
+            <video id="video" autoplay playsinline></video>
+            <img id="preview" style="display: none;">
+            <div class="result-overlay" id="result-overlay">
+                <i class="fa-solid" id="result-icon"></i>
+            </div>
+        </div>
+
+        <div class="liveness-status" id="liveness-status">&nbsp;</div>
+
+        <div class="liveness-actions">
+            <button type="button" id="capture-btn" class="btn btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.9rem;">
+                <i class="fa-solid fa-camera"></i>&nbsp; Capture
+            </button>
+            <button type="button" id="retake-btn" class="btn btn-outline" style="padding: 0.5rem 1.2rem; font-size: 0.9rem; display: none;">
+                Retake
+            </button>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="liveness-form" style="text-align: center; margin-top: 12px;">
+            {% csrf_token %}
+            <input type="file" name="selfie" id="selfie-input" style="display: none;" required>
+            <button type="submit" class="btn btn-primary" id="submit-btn" style="padding: 0.5rem 1.2rem; font-size: 0.9rem; display: none;">
+                Verify Face
+            </button>
+        </form>
+    </div>
+</main>
+
+<script>
+const video = document.getElementById('video');
+const preview = document.getElementById('preview');
+const cameraFrame = document.getElementById('camera-frame');
+const captureBtn = document.getElementById('capture-btn');
+const retakeBtn = document.getElementById('retake-btn');
+const submitBtn = document.getElementById('submit-btn');
+const selfieInput = document.getElementById('selfie-input');
+const statusEl = document.getElementById('liveness-status');
+const overlay = document.getElementById('result-overlay');
+const resultIcon = document.getElementById('result-icon');
+
+const canvas = document.createElement('canvas');
+let stream = null;
+
+async function startCamera() {
+    cameraFrame.classList.remove('success', 'failure');
+    overlay.classList.remove('show');
+    statusEl.textContent = 'Starting camera…';
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 640 } }
+        });
+        video.srcObject = stream;
+        statusEl.textContent = 'Center your face and capture.';
+    } catch (err) {
+        statusEl.textContent = 'Camera access denied or unavailable.';
+    }
+}
+
+captureBtn.addEventListener('click', () => {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1); // un-mirror so the saved image matches real orientation
+    ctx.drawImage(video, 0, 0);
+
+    canvas.toBlob((blob) => {
+        const file = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        selfieInput.files = dataTransfer.files;
+
+        preview.src = URL.createObjectURL(blob);
+        preview.style.display = 'block';
+        video.style.display = 'none';
+
+        captureBtn.style.display = 'none';
+        retakeBtn.style.display = 'inline-flex';
+        submitBtn.style.display = 'inline-flex';
+        statusEl.textContent = 'Looks good? Submit to verify.';
+
+        stream.getTracks().forEach(track => track.stop());
+    }, 'image/jpeg', 0.92);
+});
+
+retakeBtn.addEventListener('click', () => {
+    preview.style.display = 'none';
+    video.style.display = 'block';
+    captureBtn.style.display = 'inline-flex';
+    retakeBtn.style.display = 'none';
+    submitBtn.style.display = 'none';
+    startCamera();
+});
+
+startCamera();
+</script>
+{% endblock %}
