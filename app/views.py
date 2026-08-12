@@ -488,7 +488,7 @@ def liveness_check(request):
             account.save()
             return redirect('app:dashboard')
         else:
-            messages.error(request, f"Face verification failed. Ensure photo isn't blurred. (score: {result.get('score'):.4f})")
+            messages.error(request, f"Face verification failed. Ensure photo is not blurred or dark")
 
         return redirect('app:liveness_check')
 
