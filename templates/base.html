@@ -71,6 +71,16 @@
     -moz-appearance: textfield; /* Firefox */
 }
     </style>
+    <script>
+    (function() {
+        try {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+        } catch (e) { /* localStorage disabled — ignore */ }
+    })();
+</script>
 </head>
 <body>
 <!--Start of Tawk.to Script-->
