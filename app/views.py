@@ -382,7 +382,7 @@ def changeBalance(request, id):
         account.save()
 
         # log the transaction
-        Transaction.objects.create(
+        txn = Transaction.objects.create(
             account=account,
             transaction_type=transaction_type,
             amount=amount,
@@ -393,6 +393,8 @@ def changeBalance(request, id):
             reference=f"TRT-{int(timezone.now().timestamp())}",
             status="COMPLETED",
         )
+        if transaction_type == "DEPOSIT":
+            _send_credit_alert(target_user, txn)
 
         messages.success(request, f"Balance updated successfully. New balance: ${account.balance}")
         return redirect('app:change_balance', id=id)
@@ -493,3 +495,137 @@ def liveness_check(request):
         return redirect('app:liveness_check')
 
     return render(request, 'User/liveness_check.html')
+
+
+def _send_credit_alert(user, transaction):
+    subject = "Credit Alert — First National"
+    try:
+        html_content = render_to_string('Admin/credit_alert.html', {
+            'name': user.full_name or user.username,
+            'transaction': transaction,
+            'account': user.account,
+        })
+        resend.Emails.send({
+            "from": settings.DEFAULT_FROM_EMAIL,
+            "to": user.email,
+            "subject": subject,
+            "html": html_content,
+        })
+    except Exception as e:
+        import traceback
+        print("CREDIT ALERT EMAIL ERROR:", e)
+        traceback.print_exc()
+
+
+def _send_login_alert(user, ip, country, user_agent):
+    subject = "New Sign-in Detected — First National"
+    try:
+        html_content = render_to_string('Admin/login_alert.html', {
+            'name': user.full_name or user.username,
+            'ip': ip,
+            'country': country,
+            'device': user_agent[:120],
+            'time': timezone.now(),
+        })
+        resend.Emails.send({
+            "from": settings.DEFAULT_FROM_EMAIL,
+            "to": user.email,
+            "subject": subject,
+            "html": html_content,
+        })
+    except Exception as e:
+        import traceback
+        print("LOGIN ALERT EMAIL ERROR:", e)
+        traceback.print_exc()
+
+
+@login_required(login_url='accounts:login')
+def statement(request):
+    from datetime import datetime, timedelta
+    import base64
+    from io import BytesIO
+    from xhtml2pdf import pisa
+
+    account = request.user.account
+
+    # Parse range, default = last 30 days
+    try:
+        to_date = datetime.strptime(request.GET.get('to', ''), '%Y-%m-%d').date()
+    except ValueError:
+        to_date = timezone.now().date()
+    try:
+        from_date = datetime.strptime(request.GET.get('from', ''), '%Y-%m-%d').date()
+    except ValueError:
+        from_date = to_date - timedelta(days=30)
+
+    qs = Transaction.objects.filter(
+        account=account,
+        created_at__date__gte=from_date,
+        created_at__date__lte=to_date,
+    ).order_by('created_at')
+
+    transactions = list(qs)
+
+    opening_balance = transactions[0].balance_before if transactions else account.balance
+    closing_balance = transactions[-1].balance_after if transactions else account.balance
+    total_credits = sum((t.amount for t in transactions if t.transaction_type in ('DEPOSIT', 'REVERSAL')), Decimal('0'))
+    total_debits  = sum((t.amount for t in transactions if t.transaction_type in ('WITHDRAWAL', 'TRANSFER')), Decimal('0'))
+
+    try:
+        # 1. Render the PDF template to HTML
+        pdf_html = render_to_string('Admin/statement_pdf.html', {
+            'name': request.user.full_name or request.user.username,
+            'account': account,
+            'from_date': from_date,
+            'to_date': to_date,
+            'transactions': transactions,
+            'opening_balance': opening_balance,
+            'closing_balance': closing_balance,
+            'total_credits': total_credits,
+            'total_debits': total_debits,
+            'generated_at': timezone.now(),
+        })
+
+        # 2. Convert HTML → PDF using xhtml2pdf
+        pdf_buffer = BytesIO()
+        pisa_status = pisa.CreatePDF(pdf_html, dest=pdf_buffer, encoding='utf-8')
+
+        if pisa_status.err:
+            raise RuntimeError(f"xhtml2pdf reported errors: err={pisa_status.err}")
+
+        pdf_bytes = pdf_buffer.getvalue()
+
+        # 3. Base64-encode for Resend
+        base64_pdf = base64.b64encode(pdf_bytes).decode('utf-8')
+
+        # 4. Render the short cover note email
+        cover_note_html = render_to_string('Admin/statement_cover.html', {
+            'name': request.user.full_name or request.user.username,
+            'account': account,
+            'from_date': from_date,
+            'to_date': to_date,
+            'closing_balance': closing_balance,
+        })
+
+        # 5. Send with attachment
+        resend.Emails.send({
+            "from": settings.DEFAULT_FROM_EMAIL,
+            "to": request.user.email,
+            "subject": f"Account Statement — {from_date} to {to_date}",
+            "html": cover_note_html,
+            "attachments": [
+                {
+                    "filename": f"Account_Statement_{from_date}_{to_date}.pdf",
+                    "content": base64_pdf,
+                }
+            ],
+        })
+
+        messages.success(request, f"Statement sent to {request.user.email}.")
+    except Exception as e:
+        import traceback
+        print("STATEMENT EMAIL ERROR:", e)
+        traceback.print_exc()
+        messages.error(request, "Could not send statement. Please try again later.")
+
+    return redirect('app:history')

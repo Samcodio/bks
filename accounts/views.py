@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from app.models import User, Notification
-from app.views import create_notification
+from app.views import create_notification, _send_login_alert
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import RegistrationForm
@@ -25,12 +25,18 @@ def login_page(request):
             # Get IP → country → create notification
             ip      = get_client_ip(request)
             country = get_country_from_ip(ip)
-            create_notification(
+            # create_notification(
+            #     user=user,
+            #     notification_type=Notification.NotificationType.SECURITY,
+            #     title="New Sign-in Detected",
+            #     message=f"A new sign-in to your account was detected from {country}. "
+            #             "If this wasn't you, please secure your account immediately.",
+            # )
+            _send_login_alert(
                 user=user,
-                notification_type=Notification.NotificationType.SECURITY,
-                title="New Sign-in Detected",
-                message=f"A new sign-in to your account was detected from {country}. "
-                        "If this wasn't you, please secure your account immediately.",
+                ip=ip,
+                country=country,
+                user_agent=request.META.get('HTTP_USER_AGENT', 'Unknown device'),
             )
             messages.success(request, 'Login Successful')
             return redirect('app:dashboard')

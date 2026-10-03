@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Account Statement</title>
+    <style>
+        /* CHANGED: @page block removed — xhtml2pdf doesn't support
+           CSS @page or counter(page). Page numbers are handled via
+           <pdf:footer> below instead. */
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Helvetica, Arial, sans-serif;
+            color: #0f172a;
+            font-size: 10pt;
+        }
+
+        .header {
+            border-bottom: 2px solid #0a1122;
+            padding-bottom: 12px;
+            margin-bottom: 24px;
+        }
+
+        .brand {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 16pt;
+            font-weight: bold;
+            /* CHANGED: letter-spacing removed — xhtml2pdf renders it
+               erratically, sometimes overlapping characters. */
+            text-transform: uppercase;
+            color: #0a1122;
+        }
+
+        .subtitle {
+            font-size: 9pt;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        h1 {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 18pt;
+            font-weight: normal;
+            color: #0a1122;
+            margin: 0 0 6px 0;
+        }
+
+        .period {
+            font-size: 9.5pt;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        /* Summary card */
+        .summary-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            /* CHANGED: border-radius removed — xhtml2pdf renders square
+               corners regardless. Removing it avoids inconsistent padding. */
+            padding: 16px 20px;
+            margin-bottom: 24px;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .summary-table td {
+            padding: 6px 0;
+            vertical-align: top;
+        }
+
+        .summary-label {
+            width: 40%;
+            font-size: 8.5pt;
+            color: #64748b;
+            text-transform: uppercase;
+            /* CHANGED: letter-spacing removed — same reason as above. */
+            font-weight: bold;
+        }
+
+        .summary-value {
+            width: 60%;
+            font-size: 10pt;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .summary-value.accent { color: #1d4ed8; font-family: 'Courier New', monospace; }
+        .summary-value.success { color: #059669; font-family: 'Courier New', monospace; }
+        .summary-value.danger  { color: #dc2626; font-family: 'Courier New', monospace; }
+        .summary-value.mono    { font-family: 'Courier New', monospace; }
+
+        .divider {
+            border-top: 1px dashed #cbd5e1;
+        }
+
+        /* Transactions table */
+        h2 {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 12pt;
+            font-weight: normal;
+            color: #0a1122;
+            margin: 24px 0 10px 0;
+        }
+
+        table.tx {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table.tx thead th {
+            background-color: #0a1122;
+            color: #ffffff;
+            font-size: 8pt;
+            text-transform: uppercase;
+            /* CHANGED: letter-spacing removed. */
+            font-weight: bold;
+            text-align: left;
+            padding: 10px 8px;
+        }
+
+        table.tx thead th.right { text-align: right; }
+
+        table.tx tbody td {
+            padding: 10px 8px;
+            font-size: 9pt;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+
+        table.tx tbody td.right { text-align: right; }
+        table.tx tbody td.mono  { font-family: 'Courier New', monospace; }
+        table.tx tbody td.date  { color: #64748b; font-size: 8.5pt; }
+        table.tx tbody td.credit { color: #059669; font-weight: bold; }
+        table.tx tbody td.debit  { color: #dc2626; font-weight: bold; }
+
+        .ref-line {
+            font-family: 'Courier New', monospace;
+            font-size: 7.5pt;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .empty-row td {
+            text-align: center;
+            padding: 32px 8px;
+            color: #94a3b8;
+            font-size: 10pt;
+        }
+
+        .footer-note {
+            margin-top: 24px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 7.5pt;
+            color: #94a3b8;
+            line-height: 1.5;
+            text-align: justify;
+        }
+    </style>
+</head>
+<body>
+
+    <pdf:footer>
+    <p style="text-align: center; font-family: Helvetica, Arial, sans-serif; font-size: 8pt; color: #64748b;">
+        First National — Account Statement — Page <pdf:pagenumber /> of <pdf:pagecount />
+    </p>
+</pdf:footer>
+
+    <div class="header">
+        <div class="brand">First National</div>
+        <div class="subtitle">Account Statement</div>
+    </div>
+
+    <h1>Account Statement</h1>
+    <div class="period">
+        Statement Period: {{ from_date|date:"M d, Y" }} — {{ to_date|date:"M d, Y" }}
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-card">
+        <table class="summary-table">
+            <tr>
+                <td class="summary-label">Account Number</td>
+                <td class="summary-value accent">{{ account.account_genID }}</td>
+            </tr>
+            <tr>
+                <td class="summary-label">Account Holder</td>
+                <td class="summary-value">{{ name }}</td>
+            </tr>
+            <tr>
+                <td class="summary-label">Account Type</td>
+                <td class="summary-value">{{ account.get_account_type_display }}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><div class="divider"></div></td>
+            </tr>
+            <tr>
+                <td class="summary-label">Opening Balance</td>
+                <td class="summary-value mono">{{ opening_balance }}</td>
+            </tr>
+            <tr>
+                <td class="summary-label">Total Credits</td>
+                <td class="summary-value success">+{{ total_credits }}</td>
+            </tr>
+            <tr>
+                <td class="summary-label">Total Debits</td>
+                <td class="summary-value danger">-{{ total_debits }}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><div class="divider"></div></td>
+            </tr>
+            <tr>
+                <td class="summary-label">Closing Balance</td>
+                <td class="summary-value mono" style="font-size: 12pt;">{{ closing_balance }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Transactions -->
+    <h2>Transaction History</h2>
+    <table class="tx">
+        <thead>
+            <tr>
+                <th style="width: 18%;">Date</th>
+                <th style="width: 40%;">Description</th>
+                <th class="right" style="width: 20%;">Amount</th>
+                <th class="right" style="width: 22%;">Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in transactions %}
+            <tr>
+                <td class="date">{{ t.created_at|date:"M d, Y" }}</td>
+                <td>
+                    {{ t.description }}
+                    <div class="ref-line">{{ t.reference }}</div>
+                </td>
+                <td class="right mono {% if t.transaction_type == 'DEPOSIT' or t.transaction_type == 'REVERSAL' %}credit{% else %}debit{% endif %}">
+                    {% if t.transaction_type == 'DEPOSIT' or t.transaction_type == 'REVERSAL' %}+{% else %}-{% endif %}{{ t.amount }}
+                </td>
+                <td class="right mono">{{ t.balance_after }}</td>
+            </tr>
+            {% empty %}
+            <tr class="empty-row">
+                <td colspan="4">No transactions were recorded during this period.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer-note">
+        SECURITY NOTICE: First National will never request your master password, pin number, or full authorization credentials via written email correspondence. If you suspect unusual activity on your digital profile, please connect with security personnel immediately. Equal Housing Lender. Member FDIC.
+        <br><br>
+        Statement generated {{generated_at|date:"M d, Y — H:i" }} UTC. This is an automated document.
+    </div>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ urlpatterns = [
     path('history/', history, name='history'),
     path('cards/', cards, name='cards'),
     path('products/', products, name='products'),
+    path('statement/', views.statement, name='statement'),
     path('loans/', loans, name='loans'),
     path('verifiedOrNot/', verifiedOrNot, name='verifiedOrNot'),
     path('notifications/', notificationList, name='notifications'),
