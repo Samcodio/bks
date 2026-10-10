@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*ga0juf!#hi21@ugh5nb0*@@!ue3y8@)t_3#w&sc&uaj+j%#4m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -96,28 +96,23 @@ CSRF_TRUSTED_ORIGINS = [
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
 DATABASES = {
-    "default": dj_database_url.parse("postgres://avnadmin:AVNS_1DGkskenR2Pj7gYtT4W@pg-2bdd4d7b-cybrongaming247-64dc.b.aivencloud.com:14803/defaultdb?sslmode=require")
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
-DATABASES['default']['CONN_MAX_AGE'] = 60
 
-
-
-
-# database_url = "postgresql://postgres.ilvcbakdvmebygrekgim:UgnCxk4gKiDgGgko@aws-1-us-east-1.pooler.supabase.com:5432/postgres"
-#
 # DATABASES = {
-#     "default": dj_database_url.parse(database_url)
+#     "default": dj_database_url.parse("postgres://avnadmin:AVNS_1DGkskenR2Pj7gYtT4W@pg-2bdd4d7b-cybrongaming247-64dc.b.aivencloud.com:14803/defaultdb?sslmode=require")
 # }
+#
+# DATABASES['default']['CONN_MAX_AGE'] = 60
+
+
+
+
 
 
 # Password validation

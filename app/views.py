@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.conf import settings
 from decimal import Decimal
 import json, requests, resend
+from django.db import transaction as db_transaction
 from django.template.loader import render_to_string
 
 # Create your views here.
@@ -327,7 +328,17 @@ def unban_user(request, user_id):
 def delete_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     username = user.username
-    user.delete()
+    with db_transaction.atomic():
+        # Delete transactions (and notifications) that reference the account
+        account = getattr(user, "account", None)
+        if account:
+            account.transactions.all().delete()   # Transaction.account is PROTECT → must delete first
+            account.delete()
+
+        # Notifications reference the user directly (CASCADE anyway, but explicit is fine)
+        user.notifications.all().delete()
+
+        user.delete()
     messages.success(request, f"{username} has been permanently deleted.")
     return redirect('app:users')
 
