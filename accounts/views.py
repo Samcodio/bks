@@ -62,7 +62,8 @@ def signUp(request):
             html_content = render_to_string('Admin/email.html', {
                 'user': user.username,
                 'user_account_num': user.account.account_genID,
-                'name': user.full_name
+                'name': user.full_name,
+                'date': user.created_at
             })
             try:
                 resend.Emails.send({

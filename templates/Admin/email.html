@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             width: 100% !important;
-            background-color: #050505; /* Deep black background */
+            background-color: #050505;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             -webkit-font-smoothing: antialiased;
             color: #e2e8f0;
@@ -28,6 +28,7 @@
         .text-white { color: #ffffff !important; }
         .text-muted { color: #8b9bb4 !important; }
         .text-accent { color: #60a5fa !important; }
+        .text-label { color: #94a3b8 !important; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
 
         /* Mobile Constraints */
         @media screen and (max-width: 600px) {
@@ -51,6 +52,12 @@
             .details-value {
                 padding-bottom: 16px !important;
             }
+            .details-table tr:last-child .details-value {
+                padding-bottom: 0 !important;
+            }
+            .security-box {
+                padding: 1.5rem !important;
+            }
         }
     </style>
 </head>
@@ -63,93 +70,115 @@
                 <!-- Main Container -->
                 <table class="email-container" role="presentation" cellspacing="0" cellpadding="0" border="0" width="550" style="background-color: #0a1122; border: 1px solid #1a2642; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);">
                     <tr>
-                        <td class="content-padding" style="padding: 3.5rem 3rem;">
+                        <td class="content-padding" style="padding: 3rem 2.5rem;">
 
-                            <!-- Header -->
+                            <!-- Header / Bank Name -->
                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                                 <tr>
-                                    <td align="center" style="padding-bottom: 2.5rem; border-bottom: 1px solid #1a2642;">
-                                        <span class="text-white" style="font-family: 'Georgia', serif; font-size: 1.25rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;">
-                                            First National
+                                    <td align="center" style="padding-bottom: 1.75rem; border-bottom: 1px solid #1a2642;">
+                                        <span class="text-white" style="font-family: 'Georgia', serif; font-size: 1.3rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;">
+                                            FIRST NATIONAL BANK
                                         </span>
                                     </td>
                                 </tr>
                             </table>
 
-                            <!-- Welcome Message -->
-                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 2.5rem;">
+                            <!-- Greeting & Main Message -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 2rem;">
                                 <tr>
-                                    <td align="left" style="padding-bottom: 1rem;">
-                                        <h1 class="text-white" style="margin: 0; font-family: 'Georgia', serif; font-size: 1.6rem; font-weight: 500; line-height: 1.3;">
-                                            Welcome to Premium Banking
-                                        </h1>
+                                    <td align="left" style="padding-bottom: 0.5rem;">
+                                        <p class="text-white" style="margin: 0; font-size: 1rem; line-height: 1.6; font-weight: 600;">
+                                            Dear Customer,
+                                        </p>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td align="left" style="padding-bottom: 2.5rem;">
-                                        <p class="text-muted" style="margin: 0; font-size: 0.95rem; line-height: 1.6;">
-                                            Hello <strong class="text-white" style="font-weight: 600;">{{ user }}</strong>,<br><br>
-                                            Thank you for choosing First National. Your secure account has been fully provisioned and initialized. Below are your official account routing details for international and domestic transfers.
+                                    <td align="left" style="padding-bottom: 2rem;">
+                                        <p class="text-muted" style="margin: 0; font-size: 0.95rem; line-height: 1.7;">
+                                            Your Online Banking registration has been successfully completed.
                                         </p>
                                     </td>
                                 </tr>
                             </table>
 
-                            <!-- Account Details Card -->
-                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0f172a; border-radius: 6px; border: 1px solid #1e293b;">
+                            <!-- ACCOUNT INFORMATION Section -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 1rem;">
                                 <tr>
-                                    <td style="padding: 2rem;">
+                                    <td align="left">
+                                        <span class="text-white" style="font-size: 0.9rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #2563eb; padding-bottom: 6px; display: inline-block;">
+                                            ACCOUNT INFORMATION
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Account Details Card -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0f172a; border-radius: 6px; border: 1px solid #1e293b; margin-bottom: 2rem;">
+                                <tr>
+                                    <td style="padding: 1.75rem 1.75rem 1.25rem 1.75rem;">
 
                                         <table class="details-table" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                                            <!-- Bank Name -->
+                                            <!-- Account Holder -->
                                             <tr>
-                                                <td class="details-label" width="40%" style="padding-bottom: 12px; font-size: 0.85rem; color: #8b9bb4; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">
-                                                    Bank Name
+                                                <td class="details-label" width="42%" style="padding-bottom: 12px; font-size: 0.8rem; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: top;">
+                                                    Account Holder
                                                 </td>
-                                                <td class="details-value text-white" width="60%" style="padding-bottom: 12px; font-size: 0.95rem; font-weight: 600;">
-                                                    First National Bank
+                                                <td class="details-value text-white" width="58%" style="padding-bottom: 12px; font-size: 0.95rem; font-weight: 500; vertical-align: top;">
+                                                    {{ name }}
                                                 </td>
                                             </tr>
-                                            <!-- Account Name -->
+                                            <!-- Account Type -->
                                             <tr>
-                                                <td class="details-label" style="padding-bottom: 12px; font-size: 0.85rem; color: #8b9bb4; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">
-                                                    Account Name
+                                                <td class="details-label" style="padding-bottom: 12px; font-size: 0.8rem; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: top;">
+                                                    Account Type
                                                 </td>
-                                                <td class="details-value text-white" style="padding-bottom: 12px; font-size: 0.95rem; font-weight: 600;">
-                                                    {{ name }}
+                                                <td class="details-value text-white" style="padding-bottom: 12px; font-size: 0.95rem; font-weight: 500; vertical-align: top;">
+                                                    Savings
                                                 </td>
                                             </tr>
                                             <!-- Account Number -->
                                             <tr>
-                                                <td class="details-label" style="padding-bottom: 12px; font-size: 0.85rem; color: #8b9bb4; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                <td class="details-label" style="padding-bottom: 12px; font-size: 0.8rem; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: top;">
                                                     Account Number
                                                 </td>
-                                                <td class="details-value text-accent" style="padding-bottom: 12px; font-size: 1.05rem; font-family: monospace; font-weight: 600; letter-spacing: 1px;">
+                                                <td class="details-value text-accent" style="padding-bottom: 12px; font-size: 1rem; font-family: monospace; font-weight: 600; letter-spacing: 0.5px; vertical-align: top;">
                                                     {{ user_account_num }}
                                                 </td>
                                             </tr>
-                                            <!-- Divider -->
+                                            <!-- Customer ID (masked GUID) -->
                                             <tr>
-                                                <td colspan="2" style="padding-bottom: 12px;">
-                                                    <div style="border-top: 1px dashed #1e293b; width: 100%;"></div>
+                                                <td class="details-label" style="padding-bottom: 12px; font-size: 0.8rem; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: top;">
+                                                    Customer ID
+                                                </td>
+                                                <td class="details-value text-white" style="padding-bottom: 12px; font-size: 0.9rem; font-family: monospace; font-weight: 500; vertical-align: top;">
+                                                    a3f8c2e1-9b4d-4f7a-8c1e-2d6b9f0a3e7c
                                                 </td>
                                             </tr>
-                                            <!-- SWIFT Code -->
+                                            <!-- Registration Status -->
                                             <tr>
-                                                <td class="details-label" style="padding-top: 4px; padding-bottom: 12px; font-size: 0.85rem; color: #8b9bb4; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">
-                                                    SWIFT Code
+                                                <td class="details-label" style="padding-bottom: 12px; font-size: 0.8rem; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: top;">
+                                                    Registration Status
                                                 </td>
-                                                <td class="details-value text-white" style="padding-top: 4px; padding-bottom: 12px; font-size: 0.95rem; font-family: monospace; font-weight: 600;">
-                                                    FNBNUS33XXX
+                                                <td class="details-value" style="padding-bottom: 12px; font-size: 0.95rem; font-weight: 600; color: #4ade80; vertical-align: top;">
+                                                    ACTIVE
                                                 </td>
                                             </tr>
-                                            <!-- IBAN -->
+                                            <!-- Identity Verification -->
                                             <tr>
-                                                <td class="details-label" style="font-size: 0.85rem; color: #8b9bb4; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">
-                                                    Routing Number
+                                                <td class="details-label" style="padding-bottom: 12px; font-size: 0.8rem; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: top;">
+                                                    Identity Verification
                                                 </td>
-                                                <td class="details-value text-white" style="font-size: 0.95rem; font-family: monospace; font-weight: 600;">
-                                                    009342184
+                                                <td class="details-value" style="padding-bottom: 12px; font-size: 0.95rem; font-weight: 600; color: #4ade80; vertical-align: top;">
+                                                    COMPLETED
+                                                </td>
+                                            </tr>
+                                            <!-- Registration Date -->
+                                            <tr>
+                                                <td class="details-label" style="font-size: 0.8rem; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: top;">
+                                                    Registration Date
+                                                </td>
+                                                <td class="details-value text-white" style="font-size: 0.95rem; font-weight: 500; vertical-align: top;">
+                                                    {{ date|date:"F j, Y" }}
                                                 </td>
                                             </tr>
                                         </table>
@@ -158,12 +187,40 @@
                                 </tr>
                             </table>
 
-                            <!-- Footer Space -->
+                            <!-- IMPORTANT ACCOUNT ACCESS NOTICE Section -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 0.75rem;">
+                                <tr>
+                                    <td align="left">
+                                        <span class="text-white" style="font-size: 0.9rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #2563eb; padding-bottom: 6px; display: inline-block;">
+                                            IMPORTANT ACCOUNT ACCESS NOTICE
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Security Notice Box -->
+                            <table class="security-box" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0f172a; border-radius: 6px; border: 1px solid #1e293b; border-left: 3px solid #2563eb;">
+                                <tr>
+                                    <td style="padding: 1.5rem 1.75rem;">
+                                        <p class="text-muted" style="margin: 0 0 1rem 0; font-size: 0.92rem; line-height: 1.7;">
+                                            For any future account activity—including checking your balance, reviewing transactions, making transfers, managing account settings, or accessing statements—please use the bank’s official Online Banking channel.
+                                        </p>
+                                        <p class="text-muted" style="margin: 0; font-size: 0.92rem; line-height: 1.7;">
+                                            <strong class="text-white" style="font-weight: 600;">For your security</strong>, never share your password, PIN, OTP, or verification codes with anyone.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Footer / Branding -->
                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 2.5rem;">
                                 <tr>
-                                    <td style="border-top: 1px solid #1a2642; padding-top: 2rem;">
-                                        <p style="margin: 0; font-size: 0.75rem; color: #475569; line-height: 1.6; letter-spacing: 0.2px; text-align: justify;">
-                                            SECURITY NOTICE: First National will never request your master password, pin number, or full authorization credentials via written email correspondence. If you suspect unusual activity on your digital profile, please connect with security personnel immediately. Equal Housing Lender. Member FDIC.
+                                    <td align="center" style="border-top: 1px solid #1a2642; padding-top: 1.75rem;">
+                                        <p style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: #64748b; letter-spacing: 0.3px; text-transform: uppercase; font-weight: 600;">
+                                            FNB Online Banking Services
+                                        </p>
+                                        <p style="margin: 0; font-size: 0.7rem; color: #475569; line-height: 1.6; letter-spacing: 0.2px;">
+                                            Equal Housing Lender. Member FDIC. This is an automated message — please do not reply directly.
                                         </p>
                                     </td>
                                 </tr>
