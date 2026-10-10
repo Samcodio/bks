@@ -7,12 +7,14 @@ from .forms import ChangePasswordForm, AccountProfileForm
 from django.contrib import messages
 from django.conf import settings
 from decimal import Decimal
+import logging
+
 import json, requests, resend
 from django.db import transaction as db_transaction
 from django.template.loader import render_to_string
 
 # Create your views here.
-
+logger = logging.getLogger(__name__)
 
 def landing(request):
     context = {}
@@ -545,9 +547,7 @@ def _send_login_alert(user, ip, country, user_agent):
             "html": html_content,
         })
     except Exception as e:
-        import traceback
-        print("LOGIN ALERT EMAIL ERROR:", e)
-        traceback.print_exc()
+        logger.exception("EMAIL ERROR: %s", e)
 
 
 @login_required(login_url='accounts:login')

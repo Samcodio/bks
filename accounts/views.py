@@ -7,7 +7,8 @@ from .forms import RegistrationForm
 import json, requests, resend
 from django.template.loader import render_to_string
 from django.conf import settings
-
+import logging
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 resend.api_key = settings.RESEND_API_KEY
@@ -73,9 +74,7 @@ def signUp(request):
                     "html": html_content,
                 })
             except Exception as e:
-                import traceback
-                print("EMAIL ERROR:", e)
-                traceback.print_exc()
+                logger.exception("EMAIL ERROR: %s", e)
             messages.success(request, 'Account successfully created')
             return redirect('accounts:login')
         else:
