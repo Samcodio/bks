@@ -63,7 +63,7 @@ def signUp(request):
                 'user': user.username,
                 'user_account_num': user.account.account_genID,
                 'name': user.full_name,
-                'date': user.created_at
+                'date': user.date_joined
             })
             try:
                 resend.Emails.send({
