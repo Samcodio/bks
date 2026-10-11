@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from app.models import User, Notification
 from app.views import create_notification, _send_login_alert
 from django.contrib.auth import login, logout, authenticate
@@ -19,7 +19,9 @@ def login_page(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-
+        useracc = get_object_or_404(User, username=username)
+        email = useracc.email
+        print(email)
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
@@ -33,11 +35,14 @@ def login_page(request):
             #     message=f"A new sign-in to your account was detected from {country}. "
             #             "If this wasn't you, please secure your account immediately.",
             # )
+            print(f'{user}')
             _send_login_alert(
+
                 user=user,
                 ip=ip,
                 country=country,
                 user_agent=request.META.get('HTTP_USER_AGENT', 'Unknown device'),
+                email=email
             )
             messages.success(request, 'Login Successful')
             return redirect('app:dashboard')
@@ -60,13 +65,14 @@ def signUp(request):
             user = form.save()
             # Send email
             subject = 'Account Created'
-            html_content = render_to_string('Admin/email.html', {
-                'user': user.username,
-                'user_account_num': user.account.account_genID,
-                'name': user.full_name,
-                'date': user.date_joined
-            })
             try:
+
+                html_content = render_to_string('Admin/email.html', {
+                    'user': user.username,
+                    'user_account_num': user.account.account_genID,
+                    'name': user.full_name,
+                    'date': user.date_joined
+                })
                 resend.Emails.send({
                     "from": settings.DEFAULT_FROM_EMAIL,
                     "to": user.email,

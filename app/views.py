@@ -21,6 +21,7 @@ def landing(request):
     return render(request, 'User/index.html', context)
 
 
+resend.api_key = settings.RESEND_API_KEY
 
 TIER_SCORES = {
     Account.TierType.TierOne: 38,
@@ -530,7 +531,7 @@ def _send_credit_alert(user, transaction):
         traceback.print_exc()
 
 
-def _send_login_alert(user, ip, country, user_agent):
+def _send_login_alert(user, ip, country, user_agent, email):
     subject = "New Sign-in Detected — First National"
     try:
         html_content = render_to_string('Admin/login_alert.html', {
@@ -542,7 +543,7 @@ def _send_login_alert(user, ip, country, user_agent):
         })
         resend.Emails.send({
             "from": settings.DEFAULT_FROM_EMAIL,
-            "to": user.email,
+            "to": email,
             "subject": subject,
             "html": html_content,
         })
