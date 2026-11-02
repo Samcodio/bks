@@ -409,7 +409,8 @@ def changeBalance(request, id):
         )
         if transaction_type == "DEPOSIT":
             _send_credit_alert(target_user, txn)
-
+        elif transaction_type == "WITHDRAWAL":
+            _send_debit_alert(target_user, txn)
         messages.success(request, f"Balance updated successfully. New balance: ${account.balance}")
         return redirect('app:change_balance', id=id)
 
@@ -530,6 +531,24 @@ def _send_credit_alert(user, transaction):
         print("CREDIT ALERT EMAIL ERROR:", e)
         traceback.print_exc()
 
+def _send_debit_alert(user, transaction):
+    subject = "Debit Alert — First National"
+    try:
+        html_content = render_to_string('Admin/debit_alert.html', {
+            'name': user.full_name or user.username,
+            'transaction': transaction,
+            'account': user.account,
+        })
+        resend.Emails.send({
+            "from": settings.DEFAULT_FROM_EMAIL,
+            "to": user.email,
+            "subject": subject,
+            "html": html_content,
+        })
+    except Exception as e:
+        import traceback
+        print("DEBIT ALERT EMAIL ERROR:", e)
+        traceback.print_exc()
 
 def _send_login_alert(user, ip, country, user_agent, email):
     subject = "New Sign-in Detected — First National"
