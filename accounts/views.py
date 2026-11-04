@@ -17,6 +17,9 @@ from django.contrib.auth.views import (
 )
 from django.urls import reverse_lazy
 from .forms import CustomPasswordResetForm, CustomSetPasswordForm
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.core.mail import EmailMultiAlternatives  # not strictly needed
 
 # Create your views here.
 resend.api_key = settings.RESEND_API_KEY
@@ -140,14 +143,46 @@ def get_country_from_ip(ip: str) -> str:
 
 
 class ForgotPasswordView(PasswordResetView):
-    """Step 1: request reset link by email."""
+    """Step 1: request reset link by email — sends via Resend SDK."""
     template_name = 'Auth/forgot_password.html'
     form_class = CustomPasswordResetForm
-    email_template_name = 'Auth/password_reset_email.txt'   # plain fallback
+    email_template_name = 'Auth/password_reset_email.txt'
     html_email_template_name = 'Auth/password_reset_email.html'
     subject_template_name = 'Auth/password_reset_subject.txt'
     success_url = reverse_lazy('accounts:password_reset_done')
     from_email = settings.DEFAULT_FROM_EMAIL
+
+    def form_valid(self, form):
+        email = form.cleaned_data["email"]
+        for user in form.get_users(email):
+            context = {
+                'email': user.email,
+                'domain': self.request.get_host(),
+                'site_name': 'First National',
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'user': user,
+                'token': self.token_generator.make_token(user),
+                'protocol': 'https' if self.request.is_secure() else 'http',
+            }
+
+            subject = render_to_string(
+                self.subject_template_name, context
+            ).strip().replace('\n', ' ')
+            text_body = render_to_string(self.email_template_name, context)
+            html_body = render_to_string(self.html_email_template_name, context)
+
+            try:
+                resend.Emails.send({
+                    "from": self.from_email,
+                    "to": user.email,
+                    "subject": subject,
+                    "text": text_body,
+                    "html": html_body,
+                })
+            except Exception as e:
+                logger.exception("PASSWORD RESET EMAIL ERROR: %s", e)
+
+        return super().form_valid(form)
 
 
 class ForgotPasswordDoneView(PasswordResetDoneView):
