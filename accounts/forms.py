@@ -170,3 +170,54 @@ class RegistrationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+    
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+
+
+class CustomPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(
+        label="Email Address",
+        max_length=254,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'name@example.com',
+            'autocomplete': 'email',
+            'required': 'true',
+        }),
+    )
+
+    def get_users(self, email):
+        active_users = User._default_manager.filter(
+            email__iexact=email, is_active=True,
+        )
+        return (u for u in active_users if u.has_usable_password())
+
+
+class CustomSetPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label="New Password",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control', 'placeholder': '••••••••',
+            'autocomplete': 'new-password', 'required': 'true',
+        }),
+    )
+    new_password2 = forms.CharField(
+        label="Confirm Password",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control', 'placeholder': '••••••••',
+            'autocomplete': 'new-password', 'required': 'true',
+        }),
+    )
+
+    def clean_new_password1(self):
+        password = self.cleaned_data.get("new_password1")
+        if len(password) < 8:
+            raise forms.ValidationError("Password must be at least 8 characters long.")
+        if not re.search(r"[A-Z]", password):
+            raise forms.ValidationError("Password must contain at least one uppercase letter.")
+        if not re.search(r"[a-z]", password):
+            raise forms.ValidationError("Password must contain at least one lowercase letter.")
+        if not re.search(r"[0-9]", password):
+            raise forms.ValidationError("Password must contain at least one number.")
+        return password
+    

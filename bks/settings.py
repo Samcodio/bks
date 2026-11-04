@@ -197,3 +197,4 @@ cloudinary.config(
     api_secret='biHImhWRz0fsh_sOgrlJqS1I5mg',
 )
 
+PASSWORD_RESET_TIMEOUT = 3600

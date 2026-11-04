@@ -9,6 +9,14 @@ from django.template.loader import render_to_string
 from django.conf import settings
 import logging
 logger = logging.getLogger(__name__)
+from django.contrib.auth.views import (
+    PasswordResetView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetCompleteView,
+)
+from django.urls import reverse_lazy
+from .forms import CustomPasswordResetForm, CustomSetPasswordForm
 
 # Create your views here.
 resend.api_key = settings.RESEND_API_KEY
@@ -128,3 +136,33 @@ def get_country_from_ip(ip: str) -> str:
         return data.get("country_name", "Unknown Location")
     except requests.RequestException:
         return "Unknown Location"
+
+
+
+class ForgotPasswordView(PasswordResetView):
+    """Step 1: request reset link by email."""
+    template_name = 'Auth/forgot_password.html'
+    form_class = CustomPasswordResetForm
+    email_template_name = 'Auth/password_reset_email.txt'   # plain fallback
+    html_email_template_name = 'Auth/password_reset_email.html'
+    subject_template_name = 'Auth/password_reset_subject.txt'
+    success_url = reverse_lazy('accounts:password_reset_done')
+    from_email = settings.DEFAULT_FROM_EMAIL
+
+
+class ForgotPasswordDoneView(PasswordResetDoneView):
+    """Step 2: 'check your email' confirmation page."""
+    template_name = 'Auth/password_reset_done.html'
+
+
+class ResetPasswordConfirmView(PasswordResetConfirmView):
+    """Step 3: set new password (validates uidb64 + token)."""
+    template_name = 'Auth/reset_password.html'
+    form_class = CustomSetPasswordForm
+    success_url = reverse_lazy('accounts:password_reset_complete')
+    post_reset_login = False    # require user to sign in manually
+
+
+class ResetPasswordCompleteView(PasswordResetCompleteView):
+    """Step 4: success page."""
+    template_name = 'Auth/password_reset_complete.html'
