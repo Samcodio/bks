@@ -26,41 +26,32 @@ resend.api_key = settings.RESEND_API_KEY
 
 
 def login_page(request):
-    print(User.objects.filter(id=1).exists())
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        useracc = get_object_or_404(User, username=username)
-        email = useracc.email
-        print(email)
+
         user = authenticate(request, username=username, password=password)
+
         if user is not None:
             login(request, user)
-            # Get IP → country → create notification
+
             ip      = get_client_ip(request)
             country = get_country_from_ip(ip)
-            # create_notification(
-            #     user=user,
-            #     notification_type=Notification.NotificationType.SECURITY,
-            #     title="New Sign-in Detected",
-            #     message=f"A new sign-in to your account was detected from {country}. "
-            #             "If this wasn't you, please secure your account immediately.",
-            # )
-            print(f'{user}')
-            _send_login_alert(
 
+            _send_login_alert(
                 user=user,
                 ip=ip,
                 country=country,
                 user_agent=request.META.get('HTTP_USER_AGENT', 'Unknown device'),
-                email=email
+                email=user.email,          # ← no extra DB lookup needed
             )
+
             messages.success(request, 'Login Successful')
             return redirect('app:dashboard')
-        else:
-            messages.warning(request, 'Invalid login details')
-    context = {}
-    return render(request, 'Auth/login.html', context)
+
+        messages.warning(request, 'Invalid login details')
+
+    return render(request, 'Auth/login.html', {})
 
 
 def logout_button(request):
